@@ -40,6 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\Chat.cs" />
+    <Compile Include="DTO\Message.cs" />
+    <Compile Include="DTO\Response.cs" />
+    <Compile Include="DTO\Result.cs" />
+    <Compile Include="DTO\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
