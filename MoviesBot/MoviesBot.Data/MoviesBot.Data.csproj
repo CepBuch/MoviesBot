@@ -44,15 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\Chat.cs" />
-    <Compile Include="DTO\Message.cs" />
-    <Compile Include="DTO\Response.cs" />
-    <Compile Include="DTO\Result.cs" />
-    <Compile Include="DTO\User.cs" />
+    <Compile Include="TelegramDTO\Chat.cs" />
+    <Compile Include="TelegramDTO\Message.cs" />
+    <Compile Include="TelegramDTO\Response.cs" />
+    <Compile Include="TelegramDTO\Result.cs" />
+    <Compile Include="TelegramDTO\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MovieDTO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
