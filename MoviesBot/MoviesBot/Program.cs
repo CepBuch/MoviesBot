@@ -11,6 +11,12 @@ namespace MoviesBot
     {
         static void Main(string[] args)
         {
+            TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
+            tg.LogMessage += a => Console.WriteLine(a);
+            while (true)
+            {
+                tg.GetUpdates();
+            }
         }
     }
 }

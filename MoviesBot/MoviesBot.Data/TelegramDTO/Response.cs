@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace MoviesBot.Data.DTO
 {
-    class Response
+    public class Response
     {
         [JsonProperty(PropertyName = "ok", Required = Required.Always)]
         public bool Success { get; set; }

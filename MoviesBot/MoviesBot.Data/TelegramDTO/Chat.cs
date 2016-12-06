@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MoviesBot.Data.DTO
 {
-    class Chat
+    public class Chat
     {
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public string Id { get; set; }
