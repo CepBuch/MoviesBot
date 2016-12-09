@@ -1,7 +1,9 @@
 ﻿using MoviesBot.Data.DTO;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,10 +28,21 @@ namespace MoviesBot
                 var response = Response.GetResponse(source);
                 if (response.Results.Length != 0)
                 {
-                    LogMessage?.Invoke(String.Format("Message from {0} was recieved: {1}",
-                                     response.Results[0].Message.User.FirstName, response.Results[0].Message.Text));
+                    LogMessage?.Invoke(String.Format("Message from {0} was recieved: {1} {2}",
+                                     response.Results[0].Message.User.FirstName, response.Results[0].Message.Text, response.Results[0].Message.Chat.Id));
                     _lastUpdateId = response.Results[0].Id;
                 }
+            }
+        }
+
+        public void SendMessage(string message, int chatId)
+        {
+            using (var client = new WebClient())
+            {
+                NameValueCollection parse = new NameValueCollection();
+                parse.Add("chat_id", chatId.ToString());
+                parse.Add("text", message);
+                client.UploadValues(_baseUrl + _token + "/sendMessage", parse);
             }
         }
     }
