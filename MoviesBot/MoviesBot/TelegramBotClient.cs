@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -43,6 +44,27 @@ namespace MoviesBot
                 parse.Add("chat_id", chatId.ToString());
                 parse.Add("text", message);
                 client.UploadValues(_baseUrl + _token + "/sendMessage", parse);
+            }
+        }
+
+        public async Task SendPhoto(int chatId, string path, string caption = "")
+        {
+            using (MultipartFormDataContent form = new MultipartFormDataContent())
+            {
+                string url = _baseUrl + _token + "/sendPhoto";
+                string fileName = path.Split('\\').Last();
+
+                form.Add(new StringContent(chatId.ToString(), Encoding.UTF8), "chat_id");
+                form.Add(new StringContent(caption, Encoding.UTF8), "caption");
+
+                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    form.Add(new StreamContent(fileStream), "photo", fileName);
+                    using (HttpClient httpClient = new HttpClient())
+                    {
+                        await httpClient.PostAsync(url, form);
+                    }
+                }
             }
         }
     }

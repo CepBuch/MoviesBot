@@ -15,6 +15,8 @@ namespace MoviesBot
             tg.LogMessage += a => Console.WriteLine(a);
             tg.GetUpdates();
             tg.SendMessage("Hello world!", 166300012);
+            tg.SendPhoto(166300012, @"C:\Users\hp\Desktop\IMG_4505.JPG", "coca cola");
+            Console.ReadLine();
         }
     }
 }
