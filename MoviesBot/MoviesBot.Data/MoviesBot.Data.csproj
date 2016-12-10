@@ -49,7 +49,7 @@
     <Compile Include="TelegramDTO\Chat.cs" />
     <Compile Include="TelegramDTO\Message.cs" />
     <Compile Include="TelegramDTO\Response.cs" />
-    <Compile Include="TelegramDTO\Result.cs" />
+    <Compile Include="TelegramDTO\Update.cs" />
     <Compile Include="TelegramDTO\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

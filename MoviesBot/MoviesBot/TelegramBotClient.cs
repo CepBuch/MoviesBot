@@ -29,22 +29,22 @@ namespace MoviesBot
         {
             _token = token;
         }
-        public async Task GetUpdates()
-        {
-            using (var client = new HttpClient())
-            {
-                string source = await client.GetStringAsync(_baseUrl + _token + "/getupdates?offset=" + (_lastUpdateId + 1));
-                var response = Response.GetResponse(source);
-                if (response.Results.Length != 0)
-                {
-                    LogMessage?.Invoke(String.Format("Message from {0} was recieved: {1} {2}",
-                                     response.Results[0].Message.User.FirstName, response.Results[0].Message.Text, response.Results[0].Message.Chat.Id));
-                    _lastUpdateId = response.Results[0].Id;
-                }
-            }
-        }
+        //public async Task GetUpdates()
+        //{
+        //    using (var client = new HttpClient())
+        //    {
+        //        string source = await client.GetStringAsync(_baseUrl + _token + "/getupdates?offset=" + (_lastUpdateId + 1));
+        //        var response = Response.GetResponse(source);
+        //        if (response.Results.Length != 0)
+        //        {
+        //            LogMessage?.Invoke(String.Format("Message from {0} was recieved: {1} {2}",
+        //                             response.Results[0].Message.User.FirstName, response.Results[0].Message.Text, response.Results[0].Message.Chat.Id));
+        //            _lastUpdateId = response.Results[0].Id;
+        //        }
+        //    }
+        //}
 
-        public void SendMessage(string message, int chatId)
+        public void SendMessage(string message, long chatId)
         {
             using (var client = new WebClient())
             {
@@ -55,7 +55,7 @@ namespace MoviesBot
             }
         }
 
-        public async Task SendPhoto(int chatId, string path, string caption = "")
+        public async Task SendPhoto(long chatId, string path, string caption = "")
         {
             using (MultipartFormDataContent form = new MultipartFormDataContent())
             {
@@ -75,7 +75,7 @@ namespace MoviesBot
             }
         }
 
-        public void SendSticker(int chatId, string stickerId)
+        public void SendSticker(long chatId, string stickerId)
         {
             using (WebClient webClient = new WebClient())
             {
@@ -86,7 +86,7 @@ namespace MoviesBot
             }
         }
 
-        public void SendChatAction(int chatId, ChatAction action)
+        public void SendChatAction(long chatId, ChatAction action)
         {
             using (WebClient webClient = new WebClient())
             {

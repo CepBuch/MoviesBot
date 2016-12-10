@@ -7,7 +7,7 @@ namespace MoviesBot.Data.DTO
     public class User
     {
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
-        public string Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
         public string FirstName { get; set; }
         [JsonProperty(PropertyName = "last_name", Required = Required.Default)]
