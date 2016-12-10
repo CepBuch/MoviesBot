@@ -18,6 +18,7 @@ namespace MoviesBot
             //    tg.GetUpdates();
             //}
             tg.SendSticker(166300012, "BQADAgADVwMAAgw7AAEKdZtTTxHdkgoC");
+            tg.SendChatAction(166300012, TelegramBotClient.ChatAction.typing);
             // tg.SendMessage("Hello world!", 166300012);
             // tg.SendPhoto(166300012, @"C:\Users\hp\Desktop\IMG_4505.JPG", "coca cola");
             //  Console.ReadLine();

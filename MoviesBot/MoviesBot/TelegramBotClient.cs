@@ -13,6 +13,14 @@ namespace MoviesBot
 {
     class TelegramBotClient
     {
+        public enum ChatAction
+        {
+            typing,
+            uploading_photo,
+            recording_video,
+            uploading_video
+        }
+
         public event Action<string> LogMessage;
         private readonly string _token;
         private const string _baseUrl = "https://api.telegram.org/bot";
@@ -75,6 +83,17 @@ namespace MoviesBot
                 parse.Add("chat_id", chatId.ToString());
                 parse.Add("sticker", stickerId);
                 webClient.UploadValues(_baseUrl + _token + "/sendSticker", parse);
+            }
+        }
+
+        public void SendChatAction(int chatId, ChatAction action)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                NameValueCollection parse = new NameValueCollection();
+                parse.Add("chat_id", chatId.ToString());
+                parse.Add("action", action.ToString());
+                webClient.UploadValues(_baseUrl + _token + "/sendChatAction", parse);
             }
         }
     }
