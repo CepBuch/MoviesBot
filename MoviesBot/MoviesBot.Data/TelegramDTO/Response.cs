@@ -9,7 +9,7 @@ namespace MoviesBot.Data.DTO
         [JsonProperty(PropertyName = "ok", Required = Required.Always)]
         public bool Success { get; set; }
         [JsonProperty(PropertyName = "result", Required = Required.Default)]
-        public T Results { get; set; }
+        public T Result { get; set; }
 
         public static Response<T> GetResponse(string source)
         {

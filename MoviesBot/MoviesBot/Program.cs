@@ -11,17 +11,33 @@ namespace MoviesBot
     {
         static void Main(string[] args)
         {
+            StartBot();
+            Console.ReadLine();
+        }
+        static async void StartBot()
+        {
             TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
-            //tg.LogMessage += a => Console.WriteLine(a);
-            //while (true)
-            //{
-            //    tg.GetUpdates();
-            //}
-            tg.SendSticker(166300012, "BQADAgADVwMAAgw7AAEKdZtTTxHdkgoC");
-            tg.SendChatAction(166300012, TelegramBotClient.ChatAction.typing);
-            // tg.SendMessage("Hello world!", 166300012);
-            // tg.SendPhoto(166300012, @"C:\Users\hp\Desktop\IMG_4505.JPG", "coca cola");
-            //  Console.ReadLine();
+            while (true)
+            {
+                //Получаем уведомления
+                var updates = await tg.GetUpdatesAsync();
+                if (updates != null && updates.Length != 0)
+                {
+                    //Для каждого уведомления выполняем действия
+                    foreach (var update in updates)
+                    {
+                        Console.WriteLine("Message from {0} was recieved: {1} {2}", update.Message.User.FirstName, update.Message.Text,
+                        update.Message.Chat.Id);
+                        
+                        await tg.SendPhotoAsync(update.Message.Chat.Id,
+                           "https://images-na.ssl-images-amazon.com/images/M/MV5BMTY2MTk3MDQ1N15BMl5BanBnXkFtZTcwMzI4NzA2NQ@@._V1_SX300.jpg", 
+                           "Here is a poster");
+                        //await tg.SendMessageAsync(update.Message.Chat.Id, "Hello");
+                        //await tg.SendStickerAsync(update.Message.Chat.Id, "BQADAgADVwMAAgw7AAEKdZtTTxHdkgoC");
+                        //await tg.SendChatActionAsync(update.Message.Chat.Id, TelegramBotClient.ChatAction.typing);
+                    }
+                }
+            }
         }
     }
 }

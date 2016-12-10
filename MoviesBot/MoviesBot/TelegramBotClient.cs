@@ -1,4 +1,5 @@
 ﻿using MoviesBot.Data.DTO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -21,28 +22,29 @@ namespace MoviesBot
             uploading_video
         }
 
-        public event Action<string> LogMessage;
-        private readonly string _token;
+
+        private readonly string _apiToken;
         private const string _baseUrl = "https://api.telegram.org/bot";
-        private int _lastUpdateId = 0;
+        private long _offset = 0;
         public TelegramBotClient(string token)
         {
-            _token = token;
+            _apiToken = token;
         }
-        //public async Task GetUpdates()
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        string source = await client.GetStringAsync(_baseUrl + _token + "/getupdates?offset=" + (_lastUpdateId + 1));
-        //        var response = Response.GetResponse(source);
-        //        if (response.Results.Length != 0)
-        //        {
-        //            LogMessage?.Invoke(String.Format("Message from {0} was recieved: {1} {2}",
-        //                             response.Results[0].Message.User.FirstName, response.Results[0].Message.Text, response.Results[0].Message.Chat.Id));
-        //            _lastUpdateId = response.Results[0].Id;
-        //        }
-        //    }
-        //}
+
+        public async Task<Update[]> GetUpdatesAsync()
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                {"offset", _offset+1 },
+            };
+            var updates = await SendWebRequest<Update[]>("getUpdates", parameters);
+            if (updates != null && updates.Length != 0)
+            {
+                _offset = updates.Last().Id;
+            }
+            return updates;
+        }
+
 
         public void SendMessage(string message, long chatId)
         {
@@ -51,29 +53,22 @@ namespace MoviesBot
                 NameValueCollection parse = new NameValueCollection();
                 parse.Add("chat_id", chatId.ToString());
                 parse.Add("text", message);
-                client.UploadValues(_baseUrl + _token + "/sendMessage", parse);
+                client.UploadValues(_baseUrl + _apiToken + "/sendMessage", parse);
             }
         }
 
-        public async Task SendPhoto(long chatId, string path, string caption = "")
+        public async Task SendPhotoAsync(long chatId, string path, string caption = "")
         {
-            using (MultipartFormDataContent form = new MultipartFormDataContent())
+            var parameters = new Dictionary<string, object>
             {
-                string url = _baseUrl + _token + "/sendPhoto";
-                string fileName = path.Split('\\').Last();
-
-                form.Add(new StringContent(chatId.ToString(), Encoding.UTF8), "chat_id");
-                form.Add(new StringContent(caption, Encoding.UTF8), "caption");
-                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    form.Add(new StreamContent(fileStream), "photo", fileName);
-                    using (HttpClient httpClient = new HttpClient())
-                    {
-                        await httpClient.PostAsync(url, form);
-                    }
-                }
-            }
+                {"chat_id",chatId },
+                {"photo", path },
+                {"caption", caption }
+            };
+            await SendWebRequest<Message>("sendPhoto", parameters);
         }
+
+
 
         public void SendSticker(long chatId, string stickerId)
         {
@@ -82,7 +77,7 @@ namespace MoviesBot
                 NameValueCollection parse = new NameValueCollection();
                 parse.Add("chat_id", chatId.ToString());
                 parse.Add("sticker", stickerId);
-                webClient.UploadValues(_baseUrl + _token + "/sendSticker", parse);
+                webClient.UploadValues(_baseUrl + _apiToken + "/sendSticker", parse);
             }
         }
 
@@ -93,7 +88,35 @@ namespace MoviesBot
                 NameValueCollection parse = new NameValueCollection();
                 parse.Add("chat_id", chatId.ToString());
                 parse.Add("action", action.ToString());
-                webClient.UploadValues(_baseUrl + _token + "/sendChatAction", parse);
+                webClient.UploadValues(_baseUrl + _apiToken + "/sendChatAction", parse);
+            }
+        }
+
+
+
+
+        public async Task<T> SendWebRequest<T>(string methodName, Dictionary<string, object> parameters = null)
+        {
+            var uri = new Uri(_baseUrl + _apiToken + "/" + methodName);
+
+            using (var client = new HttpClient())
+            {
+                Response<T> responseObject = null; 
+                HttpResponseMessage response;
+
+                if (parameters == null || parameters.Count == 0)
+                {
+                    response = await client.GetAsync(uri);
+                }
+                else
+                {
+                    var data = JsonConvert.SerializeObject(parameters);
+                    var httpContent = new StringContent(data, Encoding.UTF8, "application/json");
+                    response = await client.PostAsync(uri, httpContent);
+                }
+                var resultStr = await response.Content.ReadAsStringAsync();
+                responseObject = JsonConvert.DeserializeObject<Response<T>>(resultStr);
+                return responseObject.Result;
             }
         }
     }
