@@ -97,7 +97,7 @@ namespace MoviesBot
 
         public async Task<T> SendWebRequest<T>(string methodName, Dictionary<string, object> parameters = null)
         {
-            var uri = new Uri(_baseUrl + _apiToken + "/" + methodName);
+            var uri = new Uri($"{_baseUrl}{_apiToken}/{methodName}");
 
             using (var client = new HttpClient())
             {
