@@ -1,4 +1,5 @@
 ﻿using MoviesBot.Data.DTO;
+using MoviesBot.Data.TelegramTypes.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -46,28 +47,30 @@ namespace MoviesBot
         }
 
 
-        public void SendMessage(string message, long chatId)
+
+        public Task<Message> SendMessageAsync(MessageType type, long chatId, string content,
+     Dictionary<string, object> parameters = null, long replyMessageId = 0)
         {
-            using (var client = new WebClient())
-            {
-                NameValueCollection parse = new NameValueCollection();
-                parse.Add("chat_id", chatId.ToString());
-                parse.Add("text", message);
-                client.UploadValues(_baseUrl + _apiToken + "/sendMessage", parse);
-            }
+            if (parameters == null)
+                parameters = new Dictionary<string, object>();
+
+            var typeInfo = type.ToKeyValue();
+
+            parameters.Add("chat_id", chatId);
+            if (!string.IsNullOrEmpty(typeInfo.Value))
+                parameters.Add(typeInfo.Value, content);
+
+            return SendWebRequest<Message>(typeInfo.Key, parameters);
         }
 
-        public async Task SendPhotoAsync(long chatId, string path, string caption = "")
+        public async Task<Message> SendPhotoAsync(long chatId, string path, string caption = "")
         {
             var parameters = new Dictionary<string, object>
             {
-                {"chat_id",chatId },
-                {"photo", path },
                 {"caption", caption }
             };
-            await SendWebRequest<Message>("sendPhoto", parameters);
+            return await SendMessageAsync(MessageType.PhotoMessage, chatId, path, parameters);
         }
-
 
 
         public void SendSticker(long chatId, string stickerId)
@@ -101,7 +104,7 @@ namespace MoviesBot
 
             using (var client = new HttpClient())
             {
-                Response<T> responseObject = null; 
+                Response<T> responseObject = null;
                 HttpResponseMessage response;
 
                 if (parameters == null || parameters.Count == 0)
