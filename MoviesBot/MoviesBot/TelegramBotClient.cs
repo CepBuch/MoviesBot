@@ -15,14 +15,6 @@ namespace MoviesBot
 {
     class TelegramBotClient
     {
-        public enum ChatAction
-        {
-            typing,
-            uploading_photo,
-            recording_video,
-            uploading_video
-        }
-
 
         private readonly string _apiToken;
         private const string _baseUrl = "https://api.telegram.org/bot";

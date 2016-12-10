@@ -27,6 +27,8 @@ namespace MoviesBot.Data.TelegramTypes.Enums
                     return new KeyValuePair<string, string>("sendPhoto", "photo");
                 case MessageType.VideoMessage:
                     return new KeyValuePair<string, string>("sendVideo", "video");
+                case MessageType.StickerMessage:
+                    return new KeyValuePair<string, string>("sendSticker", "sticker");
                 default:
                     throw new NotImplementedException();
             }

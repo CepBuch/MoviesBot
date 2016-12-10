@@ -47,6 +47,7 @@
     <Compile Include="MovieDTO\Movie.cs" />
     <Compile Include="MovieDTO\MovieResponse.cs" />
     <Compile Include="TelegramTypes\Chat.cs" />
+    <Compile Include="TelegramTypes\Enums\ChatActions.cs" />
     <Compile Include="TelegramTypes\Enums\MessageType.cs" />
     <Compile Include="TelegramTypes\KeyboardButton.cs" />
     <Compile Include="TelegramTypes\Message.cs" />

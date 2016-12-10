@@ -33,8 +33,8 @@ namespace MoviesBot
                         await tg.SendPhotoAsync(update.Message.Chat.Id,
                            "https://images-na.ssl-images-amazon.com/images/M/MV5BMTY2MTk3MDQ1N15BMl5BanBnXkFtZTcwMzI4NzA2NQ@@._V1_SX300.jpg", 
                            "Here is a poster");
-
                         //await tg.SendStickerAsync(update.Message.Chat.Id, "BQADAgADVwMAAgw7AAEKdZtTTxHdkgoC");
+
                         //await tg.SendChatActionAsync(update.Message.Chat.Id, TelegramBotClient.ChatAction.typing);
                     }
                 }
