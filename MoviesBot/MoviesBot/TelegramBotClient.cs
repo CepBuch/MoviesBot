@@ -21,11 +21,11 @@ namespace MoviesBot
         {
             _token = token;
         }
-        public void GetUpdates()
+        public async Task GetUpdates()
         {
             using (var client = new HttpClient())
             {
-                string source = client.GetStringAsync(_baseUrl + _token + "/getupdates?offset=" + (_lastUpdateId + 1)).Result;
+                string source = await client.GetStringAsync(_baseUrl + _token + "/getupdates?offset=" + (_lastUpdateId + 1));
                 var response = Response.GetResponse(source);
                 if (response.Results.Length != 0)
                 {
@@ -56,7 +56,6 @@ namespace MoviesBot
 
                 form.Add(new StringContent(chatId.ToString(), Encoding.UTF8), "chat_id");
                 form.Add(new StringContent(caption, Encoding.UTF8), "caption");
-
                 using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {
                     form.Add(new StreamContent(fileStream), "photo", fileName);
@@ -65,6 +64,17 @@ namespace MoviesBot
                         await httpClient.PostAsync(url, form);
                     }
                 }
+            }
+        }
+
+        public void SendSticker(int chatId, string stickerId)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                NameValueCollection parse = new NameValueCollection();
+                parse.Add("chat_id", chatId.ToString());
+                parse.Add("sticker", stickerId);
+                webClient.UploadValues(_baseUrl + _token + "/sendSticker", parse);
             }
         }
     }
