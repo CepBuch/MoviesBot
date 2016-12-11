@@ -16,6 +16,7 @@ namespace MoviesBot
     class TelegramBotClient
     {
         public List<long> WaitingChats { get; set; }
+        public Dictionary<long, List<string>> ChatMoviesDict { get; set; }
 
         private readonly string _apiToken;
         private const string _baseUrl = "https://api.telegram.org/bot";
@@ -24,6 +25,7 @@ namespace MoviesBot
         {
             _apiToken = token;
             WaitingChats = new List<long>();
+            ChatMoviesDict = new Dictionary<long, List<string>>();
         }
 
         public async Task<Update[]> GetUpdatesAsync()

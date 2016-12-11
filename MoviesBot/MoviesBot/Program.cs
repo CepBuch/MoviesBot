@@ -33,22 +33,57 @@ namespace MoviesBot
                         if (tg.WaitingChats.Exists(id => update.Message.Chat.Id == id))
                         {
                             var result = await ms.MovieSearch(update.Message.Text);
-                            string messageForm = "";
+
 
                             if (result != null && result.Count != 0)
                             {
+                                var titles = new List<string>();
                                 await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "This is all I can offer you:");
-
+                                string messageForm = "";
                                 int i = 1;
                                 foreach (var movie in result)
+                                {
                                     messageForm += i++ + ". " + movie.Title + " (" + movie.Year + ")" + "\n";
+                                    titles.Add(movie.Title);
+                                }
+                                tg.ChatMoviesDict[update.Message.Chat.Id] = titles;
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, messageForm);
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id,
+                                    "Please choose the exact movie to get more detailed information (from 1 to " + result.Count + ")"
+                                    + " or send ''No'' if there is no suitable movie for in the list above");
 
                             }
                             else
-                                messageForm = "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id,
+                                    "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct");
 
-                            await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, messageForm);
+
                             tg.WaitingChats.Remove(update.Message.Chat.Id);
+                        }
+                        else if (tg.ChatMoviesDict.ContainsKey(update.Message.Chat.Id))
+                        {
+                            int chosenIndex = 1;
+                            if (update.Message.Text.Trim().ToLower() == "no")
+                            {
+                                tg.ChatMoviesDict.Remove(update.Message.Chat.Id);
+                            }
+                            else if (int.TryParse(update.Message.Text, out chosenIndex) && chosenIndex >= 1
+                                && chosenIndex <= tg.ChatMoviesDict[update.Message.Chat.Id].Count)
+                            {
+                                var movie = await ms.SingleMovieSearch(tg.ChatMoviesDict[update.Message.Chat.Id][chosenIndex - 1]);
+                                tg.ChatMoviesDict.Remove(update.Message.Chat.Id);
+                                var messageForm = movie.Title + " (" + movie.Year + ")" + "\n\n" + "Runtime: " + movie.Runtime + "\n" + "Genre: " + movie.Genre + "\n" +
+                                "Country: " + movie.Country + "\n" + "Director: " + movie.Director + "\n" + "Actors: " + movie.Actors + "\n" +
+                                "Description: " + movie.Plot + "\n" + "IMDB Rating: " +  "\n" + movie.ImdbRating;
+
+                                await tg.SendPhotoAsync(update.Message.Chat.Id, movie.Poster, movie.Title);
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, messageForm);
+
+                            }
+                            else
+                            {
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "You are asked to chose the movie to get more about it or put ''No'' to cancel ");
+                            }
                         }
                         else
                         {
