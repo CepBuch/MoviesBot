@@ -10,7 +10,6 @@ namespace MoviesBot.Data.TelegramTypes.Enums
     {
         typing,
         uploading_photo,
-        recording_video,
         uploading_video
     }
 
