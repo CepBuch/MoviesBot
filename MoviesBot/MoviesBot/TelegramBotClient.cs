@@ -15,6 +15,7 @@ namespace MoviesBot
 {
     class TelegramBotClient
     {
+        public List<long> WaitingChats { get; set; }
 
         private readonly string _apiToken;
         private const string _baseUrl = "https://api.telegram.org/bot";
@@ -22,6 +23,7 @@ namespace MoviesBot
         public TelegramBotClient(string token)
         {
             _apiToken = token;
+            WaitingChats = new List<long>();
         }
 
         public async Task<Update[]> GetUpdatesAsync()
@@ -114,10 +116,5 @@ namespace MoviesBot
                 return responseObject.Result;
             }
         }
-
-
-
-
-
     }
 }

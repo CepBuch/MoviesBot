@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MovieDTO\Enums\QueryType.cs" />
     <Compile Include="MovieDTO\Movie.cs" />
     <Compile Include="MovieDTO\MovieResponse.cs" />
     <Compile Include="TelegramTypes\Chat.cs" />

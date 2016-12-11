@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace MoviesBot.Data.MovieDTO
 {
-   public class Movie
+    public class Movie
     {
         [JsonProperty(PropertyName = "Title")]
         public string Title { get; set; }
         [JsonProperty(PropertyName = "Year")]
-        public int Year { get; set; }
+        public string Year { get; set; }
         [JsonProperty(PropertyName = "Poster")]
         public string Poster { get; set; }
         [JsonProperty(PropertyName = "imdbID")]
