@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesBot.Data.MovieDTO
+namespace MoviesBot.Data.MovieData.Types
 {
     public class MovieResponse
     {

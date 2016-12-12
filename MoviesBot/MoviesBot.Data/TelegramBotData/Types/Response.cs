@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace MoviesBot.Data.DTO
+namespace MoviesBot.Data.TelegramBotData.Types
 {
     public class Response<T>
     {

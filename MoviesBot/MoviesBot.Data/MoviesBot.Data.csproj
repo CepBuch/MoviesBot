@@ -44,23 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotAnswerMessages.cs" />
-    <Compile Include="MovieDTO\Enums\QueryType.cs" />
-    <Compile Include="MovieDTO\Movie.cs" />
-    <Compile Include="MovieDTO\MovieResponse.cs" />
-    <Compile Include="TelegramTypes\Chat.cs" />
-    <Compile Include="TelegramTypes\Enums\ChatActions.cs" />
-    <Compile Include="TelegramTypes\Enums\MessageType.cs" />
-    <Compile Include="TelegramTypes\Message.cs" />
-    <Compile Include="TelegramTypes\Response.cs" />
-    <Compile Include="TelegramTypes\Update.cs" />
-    <Compile Include="TelegramTypes\User.cs" />
+    <Compile Include="BotAnswers.cs" />
+    <Compile Include="MovieData\Enums\QueryType.cs" />
+    <Compile Include="MovieData\Types\Movie.cs" />
+    <Compile Include="MovieData\Types\MovieResponse.cs" />
+    <Compile Include="TelegramBotData\Types\Chat.cs" />
+    <Compile Include="TelegramBotData\Enums\ChatActions.cs" />
+    <Compile Include="TelegramBotData\Enums\MessageType.cs" />
+    <Compile Include="TelegramBotData\Types\Message.cs" />
+    <Compile Include="TelegramBotData\Types\Response.cs" />
+    <Compile Include="TelegramBotData\Types\Update.cs" />
+    <Compile Include="TelegramBotData\Types\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="MovieData\Files\top250.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

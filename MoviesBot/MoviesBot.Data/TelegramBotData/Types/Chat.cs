@@ -1,14 +1,13 @@
 ﻿
-
 using Newtonsoft.Json;
 
-namespace MoviesBot.Data.DTO
+namespace MoviesBot.Data.TelegramBotData.Types
 {
-    public class User
+    public class Chat
     {
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public long Id { get; set; }
-        [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "first_name", Required = Required.Default)]
         public string FirstName { get; set; }
         [JsonProperty(PropertyName = "last_name", Required = Required.Default)]
         public string LastName { get; set; }

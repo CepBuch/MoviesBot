@@ -1,4 +1,4 @@
-﻿using MoviesBot.Data.MovieDTO;
+﻿using MoviesBot.Data.MovieData.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MoviesBot.Data
 {
-    public static class BotAnswerMessages
+    public static class BotAnswers
     {
         public static string GetInfoMessage()
         {
@@ -43,7 +43,7 @@ Description: {7}
 
 IMDB rating: {8}"
 , movie.Title, movie.Year, movie.Runtime, movie.Genre, movie.Country,
-movie.Director, movie.Actors, movie.Plot, movie.Plot, movie.ImdbID);
+movie.Director, movie.Actors, movie.Plot, movie.ImdbID);
 
         }
 

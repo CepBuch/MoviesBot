@@ -1,4 +1,4 @@
-﻿using MoviesBot.Data.MovieDTO;
+﻿using MoviesBot.Data.MovieData.Types;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,27 +9,27 @@ using System.Threading.Tasks;
 
 namespace MoviesBot
 {
-    class MovieService
+    class MovieService : IMovieService
     {
-        public async Task<List<Movie>> MovieSearch(string query)
+        public List<Movie> SearchMovies(string query)
         {
             using (var client = new HttpClient())
             {
                 string[] words = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string source = String.Join("+", words);
-                string result = await client.GetStringAsync(String.Format("http://www.omdbapi.com/?s={0}&y=&plot=short&r=json", source));
+                string result = client.GetStringAsync(String.Format("http://www.omdbapi.com/?s={0}&y=&plot=short&r=json", source)).Result;
                 var data = JsonConvert.DeserializeObject<MovieResponse>(result);
                 return data.Movies;
             }
         }
 
-        public async Task<Movie> SingleMovieSearch(string query)
+        public  Movie SingleMovieSearch(string query)
         {
             using (var client = new HttpClient())
             {
                 string[] words = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string source = String.Join("+", words);
-                string result = await client.GetStringAsync(String.Format("http://www.omdbapi.com/?t={0}&y=&plot=full&r=json", source));
+                string result = client.GetStringAsync(String.Format("http://www.omdbapi.com/?t={0}&y=&plot=full&r=json", source)).Result;
                 var data = JsonConvert.DeserializeObject<Movie>(result);
                 return data;
             }
