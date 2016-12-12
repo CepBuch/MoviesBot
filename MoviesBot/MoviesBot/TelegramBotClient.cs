@@ -1,4 +1,5 @@
-﻿using MoviesBot.Data.DTO;
+﻿using MoviesBot.Data;
+using MoviesBot.Data.DTO;
 using MoviesBot.Data.TelegramTypes.Enums;
 using Newtonsoft.Json;
 using System;
@@ -30,14 +31,18 @@ namespace MoviesBot
             _token = token;
             WaitingChats = new List<long>();
             ChatMoviesDict = new Dictionary<long, List<string>>();
-            OnMessageReceived += m => LogMessage($"Message from {m.User.FirstName} was recieved: {m.Text} {m.Chat.Id}");
+            OnMessageReceived += m =>
+            {
+                LogMessage($"Message from {m.User.FirstName} was recieved: {m.Text} {m.Chat.Id}");
+                SendMessageAsync(MessageType.TextMessage, m.Chat.Id, BotAnswerMessages.GetInfoMessage());
+            };
         }
 
 
 
         public async void StartBot()
         {
-            while(true)
+            while (true)
             {
                 try
                 {
@@ -48,7 +53,7 @@ namespace MoviesBot
                         _offset = update.Id + 1;
                     }
                 }
-                catch(WebException) { }
+                catch (WebException) { }
             }
         }
 
@@ -60,7 +65,7 @@ namespace MoviesBot
                 var response = await GetMeAsync();
                 return response != null;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -71,7 +76,7 @@ namespace MoviesBot
         {
             var parameters = new Dictionary<string, object>
             {
-                {"offset", _offset },
+                {"offset", _offset},
             };
             return await SendWebRequest<Update[]>("getUpdates", parameters);
         }

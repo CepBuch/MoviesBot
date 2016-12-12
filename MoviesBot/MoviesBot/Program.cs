@@ -1,4 +1,5 @@
-﻿using MoviesBot.Data.TelegramTypes.Enums;
+﻿using MoviesBot.Data;
+using MoviesBot.Data.TelegramTypes.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace MoviesBot
         {
             TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
             tg.LogMessage += m => Console.WriteLine(m);
-            if(await tg.TestBot())
+            if (await tg.TestBot())
             {
                 tg.StartBot();
             }
@@ -31,10 +32,6 @@ namespace MoviesBot
         static async void StartBot()
         {
             TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
-            tg.LogMessage += m => Console.WriteLine(m);
-
-            Console.WriteLine(await tg.TestBot());
-            Console.ReadLine();
             var ms = new MovieService();
             while (true)
             {
@@ -43,7 +40,6 @@ namespace MoviesBot
                 {
                     foreach (var update in updates)
                     {
-                        await tg.SendStickerAsync(update.Message.Chat.Id, "BQADBAADSwEAAnCr1QTYNz24Lc00FQI");
                         if (tg.WaitingChats.Exists(id => update.Message.Chat.Id == id))
                         {
                             var result = await ms.MovieSearch(update.Message.Text);
@@ -53,23 +49,18 @@ namespace MoviesBot
                             {
                                 var titles = new List<string>();
                                 await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "This is all I can offer you:");
-                                string messageForm = "";
-                                int i = 1;
+
                                 foreach (var movie in result)
                                 {
-                                    messageForm += i++ + ". " + movie.Title + " (" + movie.Year + ")" + "\n";
                                     titles.Add(movie.Title);
                                 }
                                 tg.ChatMoviesDict[update.Message.Chat.Id] = titles;
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, messageForm);
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id,
-                                    "Please choose the exact movie to get more detailed information (from 1 to " + result.Count + ")"
-                                    + " or send ''No'' if there is no suitable movie for in the list above");
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.GetListOfMoviesMessage(result));
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.MovieChooseMesage(result.Count));
 
                             }
                             else
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id,
-                                    "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct");
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.MovieNotFoundMessage());
 
 
                             tg.WaitingChats.Remove(update.Message.Chat.Id);
@@ -86,12 +77,9 @@ namespace MoviesBot
                             {
                                 var movie = await ms.SingleMovieSearch(tg.ChatMoviesDict[update.Message.Chat.Id][chosenIndex - 1]);
                                 tg.ChatMoviesDict.Remove(update.Message.Chat.Id);
-                                var messageForm = movie.Title + " (" + movie.Year + ")" + "\n\n" + "Runtime: " + movie.Runtime + "\n" + "Genre: " + movie.Genre + "\n" +
-                                "Country: " + movie.Country + "\n" + "Director: " + movie.Director + "\n" + "Actors: " + movie.Actors + "\n" +
-                                "Description: " + movie.Plot + "\n" + "IMDB Rating: " +  "\n" + movie.ImdbRating;
 
                                 await tg.SendPhotoAsync(update.Message.Chat.Id, movie.Poster, movie.Title);
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, messageForm);
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.GetMovieInfoMessage(movie));
 
                             }
                             else
@@ -106,12 +94,7 @@ namespace MoviesBot
                                 case "/start":
                                 case "/info":
                                     {
-                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "This bot is responsible for searching movies:\n"
-                                            + "List of commands:\n"
-                                            + "/info - Shows information about this bot (like this message)\n"
-                                            + "/moviesearch - Provides search by film title/piece of title\n"
-                                            + "/getfromtop250 - Returns random movie from IMDB top-250 best movies\n"
-                                            + "/getbygenre - Returns random movie by genre");
+                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.GetInfoMessage());
                                         break;
                                     }
                                 case "/moviesearch":

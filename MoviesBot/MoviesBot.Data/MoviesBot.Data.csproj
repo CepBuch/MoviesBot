@@ -44,15 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotAnswerMessages.cs" />
     <Compile Include="MovieDTO\Enums\QueryType.cs" />
     <Compile Include="MovieDTO\Movie.cs" />
     <Compile Include="MovieDTO\MovieResponse.cs" />
     <Compile Include="TelegramTypes\Chat.cs" />
     <Compile Include="TelegramTypes\Enums\ChatActions.cs" />
     <Compile Include="TelegramTypes\Enums\MessageType.cs" />
-    <Compile Include="TelegramTypes\KeyboardButton.cs" />
     <Compile Include="TelegramTypes\Message.cs" />
-    <Compile Include="TelegramTypes\ReplyKeyboardMarkup.cs" />
     <Compile Include="TelegramTypes\Response.cs" />
     <Compile Include="TelegramTypes\Update.cs" />
     <Compile Include="TelegramTypes\User.cs" />
