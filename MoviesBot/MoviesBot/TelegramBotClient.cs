@@ -69,26 +69,17 @@ namespace MoviesBot
         }
 
 
-        public void SendSticker(long chatId, string stickerId)
-        {
-            using (WebClient webClient = new WebClient())
-            {
-                NameValueCollection parse = new NameValueCollection();
-                parse.Add("chat_id", chatId.ToString());
-                parse.Add("sticker", stickerId);
-                webClient.UploadValues(_baseUrl + _apiToken + "/sendSticker", parse);
-            }
-        }
+        public async Task<Message> SendStickerAsync(long chatId, string stickerId)
+            => await SendMessageAsync(MessageType.StickerMessage, chatId, stickerId);
 
-        public void SendChatAction(long chatId, ChatAction action)
+        public Task<bool> SendChatAction(long chatId, ChatAction action)
         {
-            using (WebClient webClient = new WebClient())
+            var parameters = new Dictionary<string, object>
             {
-                NameValueCollection parse = new NameValueCollection();
-                parse.Add("chat_id", chatId.ToString());
-                parse.Add("action", action.ToString());
-                webClient.UploadValues(_baseUrl + _apiToken + "/sendChatAction", parse);
-            }
+                {"chat_id", chatId},
+                {"action",action.ToString() }
+            };
+            return SendWebRequest<bool>("sendChatAction",parameters);
         }
 
 
