@@ -18,28 +18,62 @@ namespace MoviesBot
         public List<long> WaitingChats { get; set; }
         public Dictionary<long, List<string>> ChatMoviesDict { get; set; }
 
-        private readonly string _apiToken;
+
+        public event Action<Message> OnMessageReceived;
+        public event Action<string> LogMessage;
+
+        private readonly string _token;
         private const string _baseUrl = "https://api.telegram.org/bot";
         private long _offset = 0;
         public TelegramBotClient(string token)
         {
-            _apiToken = token;
+            _token = token;
             WaitingChats = new List<long>();
             ChatMoviesDict = new Dictionary<long, List<string>>();
+            OnMessageReceived += m => LogMessage($"Message from {m.User.FirstName} was recieved: {m.Text} {m.Chat.Id}");
         }
+
+
+
+        public async void StartBot()
+        {
+            while(true)
+            {
+                try
+                {
+                    var updates = await GetUpdatesAsync();
+                    foreach (var update in updates)
+                    {
+                        OnMessageReceived?.Invoke(update.Message);
+                        _offset = update.Id + 1;
+                    }
+                }
+                catch(WebException) { }
+            }
+        }
+
+
+        public async Task<bool> TestBot()
+        {
+            try
+            {
+                var response = await GetMeAsync();
+                return response != null;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+        public async Task<User> GetMeAsync() => await SendWebRequest<User>("getMe");
 
         public async Task<Update[]> GetUpdatesAsync()
         {
             var parameters = new Dictionary<string, object>
             {
-                {"offset", _offset+1 },
+                {"offset", _offset },
             };
-            var updates = await SendWebRequest<Update[]>("getUpdates", parameters);
-            if (updates != null && updates.Length != 0)
-            {
-                _offset = updates.Last().Id;
-            }
-            return updates;
+            return await SendWebRequest<Update[]>("getUpdates", parameters);
         }
 
 
@@ -79,7 +113,7 @@ namespace MoviesBot
                 {"chat_id", chatId},
                 {"action",action.ToString() }
             };
-            return SendWebRequest<bool>("sendChatAction",parameters);
+            return SendWebRequest<bool>("sendChatAction", parameters);
         }
 
 
@@ -87,7 +121,7 @@ namespace MoviesBot
 
         public async Task<T> SendWebRequest<T>(string methodName, Dictionary<string, object> parameters = null)
         {
-            var uri = new Uri($"{_baseUrl}{_apiToken}/{methodName}");
+            var uri = new Uri($"{_baseUrl}{_token}/{methodName}");
 
             using (var client = new HttpClient())
             {

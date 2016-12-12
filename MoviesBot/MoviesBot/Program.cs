@@ -13,13 +13,28 @@ namespace MoviesBot
         
         static void Main(string[] args)
         {
-            StartBot();
+            AnotherStartBot();
             
             Console.ReadLine();
+        }
+
+
+        static async void AnotherStartBot()
+        {
+            TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
+            tg.LogMessage += m => Console.WriteLine(m);
+            if(await tg.TestBot())
+            {
+                tg.StartBot();
+            }
         }
         static async void StartBot()
         {
             TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
+            tg.LogMessage += m => Console.WriteLine(m);
+
+            Console.WriteLine(await tg.TestBot());
+            Console.ReadLine();
             var ms = new MovieService();
             while (true)
             {
@@ -29,8 +44,6 @@ namespace MoviesBot
                     foreach (var update in updates)
                     {
                         await tg.SendStickerAsync(update.Message.Chat.Id, "BQADBAADSwEAAnCr1QTYNz24Lc00FQI");
-                        Console.WriteLine("Message from {0} was recieved: {1} {2}", update.Message.User.FirstName, update.Message.Text,
-                        update.Message.Chat.Id);
                         if (tg.WaitingChats.Exists(id => update.Message.Chat.Id == id))
                         {
                             var result = await ms.MovieSearch(update.Message.Text);
