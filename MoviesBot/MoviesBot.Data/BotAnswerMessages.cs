@@ -54,6 +54,17 @@ movie.Director, movie.Actors, movie.Plot, movie.Plot, movie.ImdbID);
         => $"Please choose the exact movie to get more detailed information (from {from} to {to}) "+
             "or send ''No'' if there is no suitable movie for in the list above";
 
+        public static string EnterMovieTitleInviting()
+            => $"Please, put estimated name of the movie you are looking for";
+
+        public static string WrongQueryMessage()
+            => "I can't understand your query. Write down /info to get all possible commands";
+
+        public static string WrongChoseMessage()
+        => "You are asked to choose the movie to get more about it or put ''No'' to cancel ";
+
+        public static string AnswerIntroduction()
+        => "This is all I can offer you:";
 
     }
 }

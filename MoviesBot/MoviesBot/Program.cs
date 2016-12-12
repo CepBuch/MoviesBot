@@ -48,7 +48,7 @@ namespace MoviesBot
                             if (result != null && result.Count != 0)
                             {
                                 var titles = new List<string>();
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "This is all I can offer you:");
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.AnswerIntroduction());
 
                                 foreach (var movie in result)
                                 {
@@ -84,7 +84,7 @@ namespace MoviesBot
                             }
                             else
                             {
-                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "You are asked to chose the movie to get more about it or put ''No'' to cancel ");
+                                await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.WrongChoseMessage());
                             }
                         }
                         else
@@ -99,13 +99,13 @@ namespace MoviesBot
                                     }
                                 case "/moviesearch":
                                     {
-                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "Put estimated name of the movie you are looking for");
+                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.EnterMovieTitleInviting() );
                                         tg.WaitingChats.Add(update.Message.Chat.Id);
                                         break;
                                     }
                                 default:
                                     {
-                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, "I can't understand your query. Write down /info to get all possible commands");
+                                        await tg.SendMessageAsync(MessageType.TextMessage, update.Message.Chat.Id, BotAnswerMessages.WrongQueryMessage(); );
                                         break;
                                     }
                             }
