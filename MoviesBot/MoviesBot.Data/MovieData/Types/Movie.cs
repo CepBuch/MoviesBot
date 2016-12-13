@@ -36,7 +36,7 @@ namespace MoviesBot.Data.MovieData.Types
         [JsonProperty(PropertyName = "Country")]
         public string Country { get; set; }
         [JsonProperty(PropertyName = "imdbRating")]
-        public double ImdbRating { get; set; }
+        public string ImdbRating { get; set; }
 
     }
 }

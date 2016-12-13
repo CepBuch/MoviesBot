@@ -43,15 +43,22 @@ Description: {7}
 
 IMDB rating: {8}"
 , movie.Title, movie.Year, movie.Runtime, movie.Genre, movie.Country,
-movie.Director, movie.Actors, movie.Plot, movie.ImdbID);
+movie.Director, movie.Actors, movie.Plot, movie.ImdbRating);
 
         }
+
+        public static string ChooseMovieFromRandom()
+        => @"There is a random movie from IMDB top 250 movie:
+- enter ''Ok'' to view info about this movie
+- enter ''Next'' to get another movie
+- enter ''Cancel to cancel this opearation";
+
 
         public static string MovieNotFoundMessage()
         => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
 
         public static string MovieChooseMesage(int to, int from = 1)
-        => $"Please choose the exact movie to get more detailed information (from {from} to {to}) "+
+        => $"Please choose the exact movie to get more detailed information (from {from} to {to}) " +
             "or send ''No'' if there is no suitable movie for in the list above";
 
         public static string EnterMovieTitleInviting()
@@ -65,6 +72,12 @@ movie.Director, movie.Actors, movie.Plot, movie.ImdbID);
 
         public static string AnswerIntroduction()
         => "This is all I can offer you:";
+
+        public static string SimpleCancelAnswer()
+            => "OK, I've got you, operation is cancelled, let's try /info to see what else I can do for you";
+
+        public static string AnswerToRandomRequest(string title)
+       => $"The movie for you is ''{title}''";
 
     }
 }

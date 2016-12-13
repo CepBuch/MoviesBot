@@ -13,7 +13,8 @@ namespace MoviesBot
     class BotManager
     {
         Dictionary<long, QueryType> _waitingForQuery;
-        Dictionary<long, List<string>> _moviesForUser { get; set; }
+        Dictionary<long, List<string>> _moviesForUser;
+        Dictionary<long, string> _randomMovie;
 
 
         IMovieService _service;
@@ -22,6 +23,7 @@ namespace MoviesBot
         {
             _waitingForQuery = new Dictionary<long, QueryType>();
             _moviesForUser = new Dictionary<long, List<string>>();
+            _randomMovie = new Dictionary<long, string>();
             _service = service;
             _client = client;
             client.OnMessageReceived += ProcessMessage;
@@ -78,6 +80,7 @@ namespace MoviesBot
                                 {
                                     _moviesForUser.Remove(message.Chat.Id);
                                     _waitingForQuery.Remove(message.Chat.Id);
+                                    await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.SimpleCancelAnswer());
                                 }
                                 else
                                 {
@@ -96,16 +99,26 @@ namespace MoviesBot
                         }
                     case QueryType.ChoosingRandomMovie:
                         {
-                            switch(message.Text.Trim().ToLower())
+                            switch (message.Text.Trim().ToLower())
                             {
                                 case "next":
-                                    //smth
+                                    string title = _service.GetRandomFrom250();
+                                    await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.AnswerToRandomRequest(title));
+                                    await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.ChooseMovieFromRandom());
                                     break;
                                 case "ok":
-                                    //smth;
+                                    string name = "";
+                                    _randomMovie.TryGetValue(message.Chat.Id, out name);
+                                    var movie = _service.SingleMovieSearch(name);
+                                    await _client.SendPhotoAsync(message.Chat.Id, movie.Poster);
+                                    await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.GetMovieInfoMessage(movie));
+                                    _waitingForQuery.Remove(message.Chat.Id);
                                     break;
                                 case "no":
                                 case "cancel":
+                                    _randomMovie.Remove(message.Chat.Id);
+                                    _waitingForQuery.Remove(message.Chat.Id);
+                                    await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.SimpleCancelAnswer());
                                     break;
                                 default:
                                     //can't understand message
@@ -131,6 +144,15 @@ namespace MoviesBot
                         {
                             await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.EnterMovieTitleInviting());
                             _waitingForQuery[message.Chat.Id] = QueryType.SearchMovie;
+                            break;
+                        }
+                    case "/getfromtop250":
+                        {
+                            string title = _service.GetRandomFrom250();
+                            _randomMovie[message.Chat.Id] = title;
+                            await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.AnswerToRandomRequest(title));
+                            await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.ChooseMovieFromRandom());
+                            _waitingForQuery.Add(message.Chat.Id, QueryType.ChoosingRandomMovie);
                             break;
                         }
                     default:

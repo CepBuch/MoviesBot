@@ -11,5 +11,6 @@ namespace MoviesBot
     {
         List<Movie> SearchMovies(string query);
         Movie SingleMovieSearch(string query);
+        string GetRandomFrom250();
     }
 }
