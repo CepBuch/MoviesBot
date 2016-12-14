@@ -63,7 +63,6 @@ namespace MoviesBot
                     //Если он ждет ответа на выбор из списка фильмов:
                     case QueryType.SelectMovie:
                         {
-                            //Здесь все так же как ты писала
                             if (_moviesForUser.ContainsKey(message.Chat.Id))
                             {
                                 int chosenIndex = 1;
@@ -103,6 +102,7 @@ namespace MoviesBot
                             {
                                 case "next":
                                     string title = _service.GetRandomFrom250();
+                                    _randomMovie[message.Chat.Id] = title;
                                     await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.AnswerToRandomRequest(title));
                                     await _client.SendMessageAsync(MessageType.TextMessage, message.Chat.Id, BotAnswers.ChooseMovieFromRandom());
                                     break;

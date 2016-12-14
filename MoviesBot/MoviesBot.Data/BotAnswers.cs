@@ -62,7 +62,7 @@ movie.Director, movie.Actors, movie.Plot, movie.ImdbRating);
             "or send ''No'' if there is no suitable movie for in the list above";
 
         public static string EnterMovieTitleInviting()
-            => $"Please, put estimated name of the movie you are looking for";
+            => $"Please, put  name of the movie you are looking for";
 
         public static string WrongQueryMessage()
             => "I can't understand your query. Write down /info to get all possible commands";

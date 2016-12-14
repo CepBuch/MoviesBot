@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MoviesBot
 {
@@ -29,11 +30,9 @@ namespace MoviesBot
 
             OnMessageReceived += m =>
             {
-                LogMessage($"Message from {m.User.FirstName} was recieved: {m.Text} {m.Chat.Id}");
+                LogMessage($"Message from {m.User.FirstName} {m.User.LastName} with chat_id {m.Chat.Id} was recieved: {m.Text}");
             };
         }
-
-
 
         public async void StartBot()
         {
@@ -48,7 +47,11 @@ namespace MoviesBot
                         _offset = update.Id + 1;
                     }
                 }
-                catch (WebException) { }
+                catch (Exception ex)
+                {
+                    LogMessage?.Invoke($"Unable to get updates. Exception occured: {ex.Message}");
+                    Thread.Sleep(10000);
+                }
             }
         }
 
@@ -122,26 +125,36 @@ namespace MoviesBot
         public async Task<T> SendWebRequest<T>(string methodName, Dictionary<string, object> parameters = null)
         {
             var uri = new Uri($"{_baseUrl}{_token}/{methodName}");
+            Response<T> responseObject = null;
 
             using (var client = new HttpClient())
             {
-                Response<T> responseObject = null;
-                HttpResponseMessage response;
+                try
+                {
+                    HttpResponseMessage response;
 
-                if (parameters == null || parameters.Count == 0)
-                {
-                    response = await client.GetAsync(uri);
+                    if (parameters == null || parameters.Count == 0)
+                    {
+                        response = await client.GetAsync(uri);
+                    }
+                    else
+                    {
+                        var data = JsonConvert.SerializeObject(parameters);
+                        var httpContent = new StringContent(data, Encoding.UTF8, "application/json");
+                        response = await client.PostAsync(uri, httpContent);
+                    }
+                    var resultStr = await response.Content.ReadAsStringAsync();
+                    responseObject = JsonConvert.DeserializeObject<Response<T>>(resultStr);
                 }
-                else
+                catch (HttpRequestException e)
                 {
-                    var data = JsonConvert.SerializeObject(parameters);
-                    var httpContent = new StringContent(data, Encoding.UTF8, "application/json");
-                    response = await client.PostAsync(uri, httpContent);
+                    throw new HttpRequestException(e.Message);
                 }
-                var resultStr = await response.Content.ReadAsStringAsync();
-                responseObject = JsonConvert.DeserializeObject<Response<T>>(resultStr);
-                return responseObject.Result;
             }
+
+            if (!responseObject.Success || responseObject == null)
+                throw new ArgumentException("Unexpected response from the web serviece");
+            return responseObject.Result;
         }
     }
 }

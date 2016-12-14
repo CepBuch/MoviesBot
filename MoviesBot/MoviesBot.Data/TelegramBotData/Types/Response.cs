@@ -11,9 +11,5 @@ namespace MoviesBot.Data.TelegramBotData.Types
         [JsonProperty(PropertyName = "result", Required = Required.Default)]
         public T Result { get; set; }
 
-        public static Response<T> GetResponse(string source)
-        {
-            return JsonConvert.DeserializeObject<Response<T>>(source);
-        }
     }
 }
