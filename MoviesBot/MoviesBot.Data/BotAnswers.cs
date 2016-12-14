@@ -1,4 +1,4 @@
-﻿using MoviesBot.Data.MovieData.Types;
+﻿using MoviesBot.Data.MovieData.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +44,7 @@ Description: {7}
 
 IMDB rating: {8}"
 , movie.Title, movie.Year, movie.Runtime, movie.Genre, movie.Country,
-movie.Director, movie.Actors, movie.Plot, movie.ImdbRating);
+movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 
         }
 

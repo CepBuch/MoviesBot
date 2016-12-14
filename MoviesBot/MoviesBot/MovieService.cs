@@ -1,4 +1,5 @@
-﻿using MoviesBot.Data.MovieData.Types;
+﻿using MoviesBot.Data.MovieData.Model;
+using MoviesBot.Data.MovieData.omdbDTO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,23 @@ namespace MoviesBot
                 string[] words = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string source = String.Join("+", words);
                 string result = client.GetStringAsync(String.Format("http://www.omdbapi.com/?s={0}&y=&plot=short&r=json", source)).Result;
-                var data = JsonConvert.DeserializeObject<MovieResponse>(result);
-                return data.Movies;
+                var data = JsonConvert.DeserializeObject<omdbResponse>(result);
+                return data.Movies.Select(m => new Movie
+                {
+                    Title = m.Title,
+                    Year = m.Year,
+                    Poster = m.Poster,
+                    ImdbID = m.ImdbID,
+                    Runtime = m.Runtime,
+                    Genre = m.Genre,
+                    Writer = m.Writer,
+                    Actors = m.Actors,
+                    Description = m.Plot,
+                    Director = m.Director,
+                    Country = m.Country,
+                    ImdbRating = m.ImdbRating
+                }
+               ).ToList();
             }
         }
 
@@ -31,8 +47,23 @@ namespace MoviesBot
                 string[] words = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string source = String.Join("+", words);
                 string result = client.GetStringAsync(String.Format("http://www.omdbapi.com/?t={0}&y=&plot=full&r=json", source)).Result;
-                var data = JsonConvert.DeserializeObject<Movie>(result);
-                return data;
+                var movie = JsonConvert.DeserializeObject<omdbMovie>(result);
+                return new Movie
+                {
+
+                    Title = movie.Title,
+                    Year = movie.Year,
+                    Poster = movie.Poster,
+                    ImdbID = movie.ImdbID,
+                    Runtime = movie.Runtime,
+                    Genre = movie.Genre,
+                    Writer = movie.Writer,
+                    Actors = movie.Actors,
+                    Description = movie.Plot,
+                    Director = movie.Director,
+                    Country = movie.Country,
+                    ImdbRating = movie.ImdbRating
+                };
             }
         }
 

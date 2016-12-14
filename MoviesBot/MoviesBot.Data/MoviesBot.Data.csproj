@@ -45,9 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotAnswers.cs" />
-    <Compile Include="MovieData\Enums\QueryType.cs" />
-    <Compile Include="MovieData\Types\Movie.cs" />
-    <Compile Include="MovieData\Types\MovieResponse.cs" />
+    <Compile Include="MovieData\Model\Movie.cs" />
+    <Compile Include="TelegramBotData\Enums\QueryType.cs" />
+    <Compile Include="MovieData\omdbDTO\omdbMovie.cs" />
+    <Compile Include="MovieData\omdbDTO\omdbResponse.cs" />
     <Compile Include="TelegramBotData\Types\Chat.cs" />
     <Compile Include="TelegramBotData\Enums\ChatActions.cs" />
     <Compile Include="TelegramBotData\Enums\MessageType.cs" />

@@ -1,6 +1,4 @@
 ﻿using MoviesBot.Data;
-using MoviesBot.Data.MovieData.Enums;
-using MoviesBot.Data.MovieData.Types;
 using MoviesBot.Data.TelegramBotData.Enums;
 using MoviesBot.Data.TelegramBotData.Types;
 using System;
@@ -41,7 +39,7 @@ namespace MoviesBot
                 switch (_waitingForQuery[_chatId])
                 {
                     //Если он ждет ответа на запрос поиска фильмов:
-                    case QueryType.SearchMovie:
+                    case QueryType.SearchingMovie:
                         {
                             var movies = _service.SearchMovies(message.Text);
                             if (movies != null && movies.Count != 0)
@@ -60,7 +58,7 @@ namespace MoviesBot
                                     //Предлагаем выбрать фильм от 1 до movieCount
                                     await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.MovieChooseMesage(movies.Count()));
                                     //А также меняем статус ожидания бота - бот теперь ожидает выбор фильма пользоваталем
-                                    _waitingForQuery[_chatId] = QueryType.SelectMovie;
+                                    _waitingForQuery[_chatId] = QueryType.SelectingMovie;
                                 }
                             }
                             //Выводим сообщение и удаляем из словаря, если результатов найдено не было
@@ -72,7 +70,7 @@ namespace MoviesBot
                             break;
                         }
                     //Если он ждет ответа на выбор из списка фильмов:
-                    case QueryType.SelectMovie:
+                    case QueryType.SelectingMovie:
                         {
                             if (_moviesForUser.ContainsKey(_chatId))
                             {
@@ -155,7 +153,7 @@ namespace MoviesBot
                     case "/moviesearch":
                         {
                             await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.EnterMovieTitleInviting());
-                            _waitingForQuery[_chatId] = QueryType.SearchMovie;
+                            _waitingForQuery[_chatId] = QueryType.SearchingMovie;
                             break;
                         }
                     case "/getfromtop250":

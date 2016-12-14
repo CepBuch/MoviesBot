@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesBot.Data.MovieData.Enums
+namespace MoviesBot.Data.TelegramBotData.Enums
 {
     public enum QueryType
     {
-        SearchMovie,
-        SelectMovie,
+        SearchingMovie,
+        SelectingMovie,
         WaitingTrailer,
         ChoosingRandomMovie,
+        SearchingPerson,
+        ChosingGenre
     }
 }

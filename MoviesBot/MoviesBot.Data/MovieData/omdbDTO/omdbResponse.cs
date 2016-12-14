@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesBot.Data.MovieData.Types
+namespace MoviesBot.Data.MovieData.omdbDTO
 {
-    public class MovieResponse
+    public class omdbResponse
     {
         [JsonProperty(PropertyName = "Search")]
-        public List<Movie> Movies { get; set; }
+        public List<omdbMovie> Movies { get; set; }
         [JsonProperty(PropertyName = "totalResults")]
         public int TotalResults { get; set; }
 
