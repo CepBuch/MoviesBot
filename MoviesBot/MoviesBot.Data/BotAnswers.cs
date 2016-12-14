@@ -11,7 +11,7 @@ namespace MoviesBot.Data
     {
         public static string GetInfoMessage()
         {
-            return String.Format(@"This bot is responsible for searching movies:
+            return String.Format(@"Hi! This bot is responsible for searching movies:
 List of commands:
 /info - Shows information about this bot (like this message)
 /moviesearch - Provides search by film title/piece of title
@@ -39,6 +39,7 @@ Genre: {3}
 Country: {4}
 Director: {5}
 Actors: {6}
+
 Description: {7}
 
 IMDB rating: {8}"
@@ -58,8 +59,8 @@ movie.Director, movie.Actors, movie.Plot, movie.ImdbRating);
         => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
 
         public static string MovieChooseMesage(int to, int from = 1)
-        => $"Please choose the exact movie to get more detailed information (from {from} to {to}) " +
-            "or send ''No'' if there is no suitable movie for in the list above";
+        => $"Please, choose the exact movie to get more detailed information (from {from} to {to}) " +
+            "or send ''Cancel'' if there is no suitable movie in the list above or you just don't wanna see detailed info";
 
         public static string EnterMovieTitleInviting()
             => $"Please, put  name of the movie you are looking for";
@@ -78,6 +79,10 @@ movie.Director, movie.Actors, movie.Plot, movie.ImdbRating);
 
         public static string AnswerToRandomRequest(string title)
        => $"The movie for you is ''{title}''";
+
+        public static string AnswerTrailer()
+        => @"Here is trailer for this movie. Note, that this function doesn't work perfectly good and trailer may be unsuitable";
+        
 
     }
 }

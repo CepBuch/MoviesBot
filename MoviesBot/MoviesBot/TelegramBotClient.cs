@@ -151,9 +151,6 @@ namespace MoviesBot
                     throw new HttpRequestException(e.Message);
                 }
             }
-
-            if (!responseObject.Success || responseObject == null)
-                throw new ArgumentException("Unexpected response from the web serviece");
             return responseObject.Result;
         }
     }
