@@ -21,4 +21,11 @@ namespace MoviesBot.Data.MovieData.Model
         public string Country { get; set; }
         public string ImdbRating { get; set; }
     }
+
+    public class Actor
+    {
+        public string Name { get; set; }
+        public List<Movie> Movies { get; set; }
+        public string Poster { get; set; }
+    }
 }

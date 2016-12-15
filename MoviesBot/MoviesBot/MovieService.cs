@@ -1,5 +1,6 @@
 ﻿using MoviesBot.Data.MovieData.Model;
 using MoviesBot.Data.MovieData.omdbDTO;
+using MoviesBot.Data.MovieData.themoviedbDTO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -83,6 +84,25 @@ namespace MoviesBot
             return top250Movies[rnd.Next(0, top250Movies.Count)];
         }
 
-
+        public List<Actor> SearchActors(string query)
+        {
+            const string _token = "b5384e21c2615e7fdff81bf8bd5b3a82";
+            using (var client = new HttpClient())
+            {
+                string result = client.GetStringAsync($"https://api.themoviedb.org/3/search/person?api_key={_token}&include_adult=False&query={query}").Result;
+                var response = JsonConvert.DeserializeObject<themoviedbResponse>(result);
+                return response.Actors.Select(actor => new Actor
+                {
+                    Name = actor.Name,
+                    Movies = actor.Movies.Select(movie => new Movie
+                    {
+                        Title = movie.Title,
+                        Description = movie.Plot
+                    }).ToList(),
+                    Poster = actor.Poster
+                }
+                    ).ToList();
+            }
+        }
     }
 }

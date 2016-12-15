@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MoviesBot.Data.MovieData.themoviedbDTO
 {
-    class themoviedbResponse
+    public class themoviedbResponse
     {
         [JsonProperty("results")]
         public List<themoviedbActor> Actors { get; set; }
