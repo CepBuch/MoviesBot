@@ -16,7 +16,8 @@ List of commands:
 /info - Shows information about this bot (like this message)
 /moviesearch - Provides search by film title/piece of title
 /getfromtop250 - Returns random movie from IMDB top-250 best movies
-/getbygenre - Returns random movie by genre");
+/getbygenre - Returns random movie by genre
+/peoplesearch - Search actors by the name/piece of name");
         }
 
         public static string GetListOfMoviesMessage(List<Movie> movies)
@@ -82,7 +83,37 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 
         public static string AnswerTrailer()
         => @"Here is trailer for this movie. Note, that this function doesn't work perfectly good and trailer may be unsuitable";
-        
 
+        public static string SingleSearchActorsAnswer(Actor actor)
+        {
+            string actorName = $"Actor: {actor.Name}";
+            StringBuilder sb = new StringBuilder();
+            foreach (var movie in actor.Movies)
+            {
+                sb.AppendLine($"\n{movie.Title} ({movie.Description})");
+            }
+            return actorName + sb.ToString();
+        }
+
+        public static string ListActorsAnswer(List<Actor> actors)
+        {
+            StringBuilder sb = new StringBuilder();
+            int n = 1;
+            foreach (var actor in actors)
+            {
+                sb.AppendLine($"{n++}. {actor.Name}");
+            }
+            return sb.ToString();
+        }
+
+        public static string EnterActorNameInviting()
+           => $"Please, put  name of the actor you are looking for";
+
+        public static string ActorChooseMesage(int to, int from = 1)
+        => $"Please, choose the exact actor to get more detailed information (from {from} to {to}) " +
+            "or send ''Cancel'' if there is no suitable actor in the list above or you just don't wanna see detailed info";
+
+        public static string ActorNotFoundMessage()
+        => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
     }
 }

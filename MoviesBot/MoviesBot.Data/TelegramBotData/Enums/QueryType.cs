@@ -13,6 +13,7 @@ namespace MoviesBot.Data.TelegramBotData.Enums
         WaitingTrailer,
         ChoosingRandomMovie,
         SearchingPerson,
+        SelectingPerson,
         ChosingGenre
     }
 }

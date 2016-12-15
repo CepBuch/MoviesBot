@@ -1,4 +1,5 @@
 ﻿using MoviesBot.Data;
+using MoviesBot.Data.MovieData.Model;
 using MoviesBot.Data.TelegramBotData.Enums;
 using MoviesBot.Data.TelegramBotData.Types;
 using System;
@@ -14,6 +15,7 @@ namespace MoviesBot
         Dictionary<long, QueryType> _waitingForQuery;
         Dictionary<long, List<string>> _moviesForUser;
         Dictionary<long, string> _answerForUser;
+        Dictionary<long, List<string>> _actorsForUser;
         long _chatId;
 
 
@@ -24,6 +26,7 @@ namespace MoviesBot
             _waitingForQuery = new Dictionary<long, QueryType>();
             _moviesForUser = new Dictionary<long, List<string>>();
             _answerForUser = new Dictionary<long, string>();
+            _actorsForUser = new Dictionary<long, List<string>>();
             _service = service;
             _client = client;
             client.OnMessageReceived += ProcessMessage;
@@ -93,7 +96,7 @@ namespace MoviesBot
                                 //Если он ввел другой тип сообщения
                                 else
                                 {
-                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId , BotAnswers.WrongChoseMessage());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.WrongChoseMessage());
                                 }
                             }
                             break;
@@ -137,9 +140,57 @@ namespace MoviesBot
 
                     case QueryType.SearchingPerson:
                         {
+                            var actors = _service.SearchActors(message.Text);
+
+                            if (actors != null && actors.Count != 0)
+                            {
+                                if (actors.Count == 1)
+                                {
+                                    _actorsForUser.Remove(_chatId);
+                                    await SendInfoAboutActor(actors[0].Name);
+                                }
+                                else
+                                {
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.AnswerIntroduction());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.ListActorsAnswer(actors));
+                                    _actorsForUser[_chatId] = actors.Select(a => a.Name).ToList();
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.ActorChooseMesage(actors.Count()));
+                                    _waitingForQuery[_chatId] = QueryType.SelectingPerson;
+                                }
+                            }
+                            else
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.ActorNotFoundMessage());
+                                _waitingForQuery.Remove(_chatId);
+                            }
                             break;
                         }
 
+                    case QueryType.SelectingPerson:
+                        {
+                            if (_actorsForUser.ContainsKey(_chatId))
+                            {
+                                int chosenIndex = 1;
+                                if (int.TryParse(message.Text, out chosenIndex) && chosenIndex >= 1 &&
+                                  chosenIndex <= _actorsForUser[_chatId].Count)
+                                {
+                                    await SendInfoAboutActor(_actorsForUser[_chatId][chosenIndex - 1]);
+                                    _actorsForUser.Remove(_chatId);
+                                    _waitingForQuery.Remove(_chatId);
+                                }
+                                else if (message.Text.Trim().ToLower() == "cancel")
+                                {
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.SimpleCancelAnswer());
+                                    _actorsForUser.Remove(_chatId);
+                                    _waitingForQuery.Remove(_chatId);
+                                }
+                                else
+                                {
+                                    await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.WrongChoseMessage());
+                                }
+                            }
+                            break;
+                        }
                 }
             }
             //Если же бот не ждет ответа:
@@ -170,6 +221,12 @@ namespace MoviesBot
                             _waitingForQuery.Add(_chatId, QueryType.ChoosingRandomMovie);
                             break;
                         }
+                    case "/peoplesearch":
+                        {
+                            await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.EnterActorNameInviting());
+                            _waitingForQuery[_chatId] = QueryType.SearchingPerson;
+                            break;
+                        }
                     default:
                         {
                             await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.WrongQueryMessage());
@@ -188,8 +245,10 @@ namespace MoviesBot
             await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.GetMovieInfoMessage(movie));
         }
 
-        
-
-
+        public async Task SendInfoAboutActor(string name)
+        {
+            var actor = _service.SearchActors(name);
+            await _client.SendMessageAsync(MessageType.TextMessage, _chatId, BotAnswers.SingleSearchActorsAnswer(actor[0]));
+        }
     }
 }
