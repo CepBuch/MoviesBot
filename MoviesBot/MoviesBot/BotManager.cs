@@ -135,6 +135,11 @@ namespace MoviesBot
                             break;
                         }
 
+                    case QueryType.SearchingPerson:
+                        {
+                            break;
+                        }
+
                 }
             }
             //Если же бот не ждет ответа:

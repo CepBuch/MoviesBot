@@ -46,6 +46,9 @@
   <ItemGroup>
     <Compile Include="BotAnswers.cs" />
     <Compile Include="MovieData\Model\Movie.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbActor.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbMovie.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbResponse.cs" />
     <Compile Include="TelegramBotData\Enums\QueryType.cs" />
     <Compile Include="MovieData\omdbDTO\omdbMovie.cs" />
     <Compile Include="MovieData\omdbDTO\omdbResponse.cs" />
@@ -64,6 +67,7 @@
   <ItemGroup>
     <Content Include="MovieData\Files\top250.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
