@@ -22,22 +22,27 @@ namespace MoviesBot
                 string source = String.Join("+", words);
                 string result = client.GetStringAsync(String.Format("http://www.omdbapi.com/?s={0}&y=&plot=short&r=json", source)).Result;
                 var data = JsonConvert.DeserializeObject<omdbResponse>(result);
-                return data.Movies.Select(m => new Movie
+
+                if (data.Movies != null && data.Movies.Count != 0)
                 {
-                    Title = m.Title,
-                    Year = m.Year,
-                    Poster = m.Poster,
-                    ImdbID = m.ImdbID,
-                    Runtime = m.Runtime,
-                    Genre = m.Genre,
-                    Writer = m.Writer,
-                    Actors = m.Actors,
-                    Description = m.Plot,
-                    Director = m.Director,
-                    Country = m.Country,
-                    ImdbRating = m.ImdbRating
+                    return data.Movies.Select(m => new Movie
+                    {
+                        Title = m.Title,
+                        Year = m.Year,
+                        Poster = m.Poster,
+                        ImdbID = m.ImdbID,
+                        Runtime = m.Runtime,
+                        Genre = m.Genre,
+                        Writer = m.Writer,
+                        Actors = m.Actors,
+                        Description = m.Plot,
+                        Director = m.Director,
+                        Country = m.Country,
+                        ImdbRating = m.ImdbRating
+                    }
+         ).ToList();
                 }
-               ).ToList();
+                else return null;
             }
         }
 
