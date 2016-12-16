@@ -13,8 +13,17 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
         public string Name { get; set; }
         [JsonProperty("known_for")]
         public List<themoviedbMovie> Movies { get; set; }
+        private string _poster;
         [JsonProperty("profile_path")]
-        public string Poster { get; set; }
+        public string Poster
+        {
+            get { return _poster; }
+            set
+            {
+                _poster = "https://image.tmdb.org/t/p/w300" + value;
+            }
+        }
+
 
     }
 }

@@ -36,6 +36,7 @@ namespace MoviesBot
 
         public async void StartBot()
         {
+            LogMessage?.Invoke("The bot is running");
             while (true)
             {
                 try

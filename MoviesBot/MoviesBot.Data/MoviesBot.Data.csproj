@@ -50,8 +50,8 @@
     <Compile Include="MovieData\themoviedbDTO\themoviedbMovie.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbResponse.cs" />
     <Compile Include="TelegramBotData\Enums\QueryType.cs" />
-    <Compile Include="MovieData\omdbDTO\omdbMovie.cs" />
-    <Compile Include="MovieData\omdbDTO\omdbResponse.cs" />
+    <Compile Include="TelegramBotData\omdbDTO\omdbMovie.cs" />
+    <Compile Include="TelegramBotData\omdbDTO\omdbResponse.cs" />
     <Compile Include="TelegramBotData\Types\Chat.cs" />
     <Compile Include="TelegramBotData\Enums\ChatActions.cs" />
     <Compile Include="TelegramBotData\Enums\MessageType.cs" />

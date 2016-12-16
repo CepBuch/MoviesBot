@@ -56,7 +56,7 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 - enter ''Cancel to cancel this opearation";
 
 
-        public static string MovieNotFoundMessage()
+        public static string NotFoundMessage()
         => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
 
         public static string MovieChooseMesage(int to, int from = 1)
@@ -88,9 +88,11 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
         {
             string actorName = $"Actor: {actor.Name}";
             StringBuilder sb = new StringBuilder();
+            int i = 1;
             foreach (var movie in actor.Movies)
             {
-                sb.AppendLine($"\n{movie.Title} ({movie.Description})");
+                sb.AppendLine($"\n{i++}. {movie.Title}");
+                sb.AppendLine($"Plot: {movie.Description}");
             }
             return actorName + sb.ToString();
         }
@@ -115,5 +117,25 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 
         public static string ActorNotFoundMessage()
         => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct";
+
+        public static string AnswerToNowPlaying(List<Movie> movies)
+        {
+            StringBuilder sb = new StringBuilder();
+            int i = 1;
+            //foreach (var movie in movies)
+            //{
+            for (int j = 0; j <=3 ; j++)
+            {
+                sb.AppendLine($"{i++}. {movies[j].Title}");
+                sb.AppendLine($"Plot: {movies[j].Description} \n");
+            }
+            //sb.AppendLine($"{i++}. {movie.Title}");
+            //sb.AppendLine($"Plot: {movie.Description} \n");
+            //}
+            return sb.ToString();
+        }
+
+        public static string IntroductionToNowPlaying()
+            => "Here is the movies that are now on screens in theatres";
     }
 }

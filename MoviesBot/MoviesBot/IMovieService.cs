@@ -10,5 +10,6 @@ namespace MoviesBot
         Movie SingleMovieSearch(string query);
         string GetRandomFrom250();
         List<Actor> SearchActors(string query);
+        List<Movie> GetNowPlaying();
     }
 }

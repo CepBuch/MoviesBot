@@ -13,5 +13,8 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
         public string Title { get; set; }
         [JsonProperty("overview")]
         public string Plot { get; set; }
+        [JsonProperty("vote_average")]
+        public string VoteAverage { get; set; }
+
     }
 }

@@ -14,6 +14,7 @@ namespace MoviesBot
 {
     class MovieService : IMovieService
     {
+        const string _token = "b5384e21c2615e7fdff81bf8bd5b3a82";
         public List<Movie> SearchMovies(string query)
         {
             using (var client = new HttpClient())
@@ -91,22 +92,47 @@ namespace MoviesBot
 
         public List<Actor> SearchActors(string query)
         {
-            const string _token = "b5384e21c2615e7fdff81bf8bd5b3a82";
+
             using (var client = new HttpClient())
             {
                 string result = client.GetStringAsync($"https://api.themoviedb.org/3/search/person?api_key={_token}&include_adult=False&query={query}").Result;
-                var response = JsonConvert.DeserializeObject<themoviedbResponse>(result);
-                return response.Actors.Select(actor => new Actor
+                var response = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbActor>>(result);
+                if (response.Results != null && response.Results.Count != 0)
                 {
-                    Name = actor.Name,
-                    Movies = actor.Movies.Select(movie => new Movie
+                    return response.Results.Select(actor => new Actor
                     {
-                        Title = movie.Title,
-                        Description = movie.Plot
-                    }).ToList(),
-                    Poster = actor.Poster
+                        Name = actor.Name,
+                        Movies = actor.Movies.Select(movie => new Movie
+                        {
+                            Title = movie.Title,
+                            Description = movie.Plot
+                        }).ToList(),
+                        Poster = actor.Poster
+                    }
+                                       ).ToList();
                 }
-                    ).ToList();
+                else return null;
+            }
+        }
+
+        public List<Movie> GetNowPlaying()
+        {
+            using (var client = new HttpClient())
+            {
+                string result = client.GetStringAsync($"https://api.themoviedb.org/3/movie/now_playing?api_key={_token}").Result;
+                var response = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(result);
+                if (response.Results != null && response.Results.Count != 0)
+                {
+                    return response.Results.Select(movie =>
+                              new Movie
+                              {
+                                  Title = movie.Title,
+                                  Description = movie.Plot,
+                                  ImdbRating = movie.VoteAverage
+                              }).ToList();
+
+                }
+                else return null;
             }
         }
     }
