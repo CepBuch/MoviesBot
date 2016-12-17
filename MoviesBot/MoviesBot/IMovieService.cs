@@ -12,5 +12,6 @@ namespace MoviesBot
         List<Actor> SearchActors(string query);
         List<Movie> GetNowPlaying();
         Dictionary<string, int> GetGenres();
+        Movie GetRandomMovieByGenre(int genreId);
     }
 }

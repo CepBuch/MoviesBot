@@ -146,11 +146,13 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
             return sb.ToString();
         }
 
-
         public static string GenresChooseMessage()
             => $"Please enter the name of genre to get random movie of this or ''Cancel'' to cancel the operation";
 
-        
+        public static string SomeMovieOfGenre(string genre)
+            => $"I find random movie of {genre} for you";
+
+
 
 
     }

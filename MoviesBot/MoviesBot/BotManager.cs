@@ -198,7 +198,11 @@ namespace MoviesBot
                         {
                             if (_genres.ContainsKey(message.Text.Trim().ToLower()))
                             {
-                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, "сейчас вам придет фильм на жанр по айдишнику " + _genres[message.Text.ToLower().Trim()]);
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SomeMovieOfGenre(message.Text.Trim().ToLower()));
+                                var movie = _service.GetRandomMovieByGenre(_genres[message.Text.ToLower().Trim()]);
+                                await _client.SendPhotoAsync(chatId, movie.Poster);
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GetMovieInfoMessage(movie));
+                                _waitingForQuery.Remove(chatId);
                             }
                             else if (message.Text.Trim().ToLower() == "cancel")
                             {

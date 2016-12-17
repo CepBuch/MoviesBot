@@ -11,5 +11,8 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
     {
         [JsonProperty("results")]
         public List<T> Results { get; set; }
+
+        [JsonProperty("total_pages")]
+        public int TotalPages { get; set; }
     }
 }

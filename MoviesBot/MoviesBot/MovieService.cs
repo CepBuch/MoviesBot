@@ -145,5 +145,23 @@ namespace MoviesBot
                 return response.Genres.ToDictionary(genre => genre.Name.ToLower().Trim(), genre => genre.Id);
             }
         }
+
+        public Movie GetRandomMovieByGenre(int genreId)
+        {
+            string url = $"https://api.themoviedb.org/3/discover/movie?with_genres={genreId}&vote_average.gte=6&vote_count.gte=500&api_key={_token}";
+            using (var client = new HttpClient())
+            {
+                string result1 = client.GetStringAsync(url).Result;
+                var response1 = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(result1);
+
+                Random rnd = new Random();
+                var page = rnd.Next(1, response1.TotalPages + 1);
+                string result2 = client.GetStringAsync(url + $"&page={page}").Result;
+
+                var response2 = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(result2);
+                var movies = response2.Results.Select(movie => movie.Title).ToList();
+                return SingleMovieSearch(movies[rnd.Next(1, movies.Count)]);
+            }
+        }
     }
 }
