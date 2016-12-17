@@ -13,5 +13,7 @@ namespace MoviesBot
         List<Movie> GetNowPlaying();
         Dictionary<string, int> GetGenres();
         Movie GetRandomMovieByGenre(int genreId);
+
+        string GetTrailerLinkForMovie(string title);
     }
 }

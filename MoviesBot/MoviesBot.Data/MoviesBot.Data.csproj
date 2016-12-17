@@ -51,6 +51,7 @@
     <Compile Include="MovieData\themoviedbDTO\themoviedbGenreResponse.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbMovie.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbResponse.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbVideo.cs" />
     <Compile Include="TelegramBotData\Enums\QueryType.cs" />
     <Compile Include="TelegramBotData\omdbDTO\omdbMovie.cs" />
     <Compile Include="TelegramBotData\omdbDTO\omdbResponse.cs" />

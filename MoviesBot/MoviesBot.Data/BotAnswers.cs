@@ -82,7 +82,7 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
        => $"The movie for you is ''{title}''";
 
         public static string AnswerTrailer()
-        => @"Here is trailer for this movie. Note, that this function doesn't work perfectly good and trailer may be unsuitable";
+        => @"Here is the trailer for this movie. Note, that this function doesn't work perfectly and trailer may be unsuitable. ";
 
         public static string SingleSearchActorsAnswer(Actor actor)
         {
@@ -151,6 +151,13 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 
         public static string SomeMovieOfGenre(string genre)
             => $"I find random movie of {genre} for you";
+
+
+        public static string TrailerQuestion()
+            => "Would you like to watch a trailer on chosen movie? (yes/no) ";
+
+        public static string TrailerWasNotFound()
+            => "Unfortunately, I couldn't find any trailers for this movie :( ";
 
 
 

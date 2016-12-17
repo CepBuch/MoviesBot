@@ -163,5 +163,41 @@ namespace MoviesBot
                 return SingleMovieSearch(movies[rnd.Next(1, movies.Count)]);
             }
         }
+
+
+
+
+        public string GetTrailerLinkForMovie(string title)
+        {
+
+            using (var client = new HttpClient())
+            {
+                var findMoviesUrl = $"https://api.themoviedb.org/3/search/movie?api_key=b5384e21c2615e7fdff81bf8bd5b3a82&language=en-US&query={title}";
+                var moviesResponse = client.GetStringAsync(findMoviesUrl).Result;
+                var movies = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(moviesResponse).Results;
+
+                string movieId;
+                if (movies != null && movies.Count != 0)
+                {
+                    var movieWithId = movies.FirstOrDefault(m => !String.IsNullOrWhiteSpace(m.TMDBId));
+
+                    if (movieWithId != null)
+                    {
+                        movieId = movieWithId.TMDBId;
+                        var url = $"https://api.themoviedb.org/3/movie/{movieId}/videos?api_key=b5384e21c2615e7fdff81bf8bd5b3a82";
+                        var trailerResponse = client.GetStringAsync(url).Result;
+
+                        var videos = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbVideo>>(trailerResponse).Results;
+                        var trailer = videos.FirstOrDefault(t => t.Type.ToLower().Trim() == "trailer");
+                        return trailer != null ? $"https://www.youtube.com/watch?v={trailer.YouTubeKey}" : null;
+                    }
+                    else return null;
+
+                }
+                else return null;
+            }
+        }
     }
+
+
 }

@@ -13,38 +13,42 @@ namespace MoviesBot
     class BotManager
     {
         Dictionary<string, int> _genres;
-        Dictionary<long, QueryType> _waitingForQuery;
-        Dictionary<long, List<string>> _moviesForUser;
-        Dictionary<long, string> _answerForUser;
-        Dictionary<long, List<string>> _actorsForUser;
+        Dictionary<long, QueryType> _botWaitsForQuery;
+        Dictionary<long, List<string>> _multipleDataForUser;
+        Dictionary<long, string> _singleDataForUser;
+
+        bool genresWasDownloaded;
 
 
         IMovieService _service;
         ITelegramBotClient _client;
+
+
         public BotManager(ITelegramBotClient client, IMovieService service)
         {
-            _waitingForQuery = new Dictionary<long, QueryType>();
-            _moviesForUser = new Dictionary<long, List<string>>();
-            _answerForUser = new Dictionary<long, string>();
-            _actorsForUser = new Dictionary<long, List<string>>();
+            _botWaitsForQuery = new Dictionary<long, QueryType>();
+            _multipleDataForUser = new Dictionary<long, List<string>>();
+            _singleDataForUser = new Dictionary<long, string>();
 
             _service = service;
             _client = client;
+
             //Getting genres from themoviedb service
             _genres = _service.GetGenres();
+            genresWasDownloaded = _genres != null && _genres.Count != 0;
+
+
             client.OnMessageReceived += ProcessMessage;
         }
 
         public async void ProcessMessage(Message message)
         {
             var chatId = message.Chat.Id;
-            //Если бот сейчас ждет ответа от пользователя
-            if (_waitingForQuery.ContainsKey(chatId))
+            //Checking if bot is waiting for user's answer or choice.
+            if (_botWaitsForQuery.ContainsKey(chatId))
             {
-                //Смотрим ответ какого рода он ждет
-                switch (_waitingForQuery[chatId])
+                switch (_botWaitsForQuery[chatId])
                 {
-                    //Если он ждет ответа на запрос поиска фильмов:
                     case QueryType.SearchingMovie:
                         {
                             var movies = _service.SearchMovies(message.Text);
@@ -52,86 +56,110 @@ namespace MoviesBot
                             {
                                 if (movies.Count == 1)
                                 {
-                                    _waitingForQuery.Remove(chatId);
-                                    await SendInfoAboutMovie(chatId, movies[0].Title);
+                                    await SendInfoAboutMovie(chatId, movies[0]);
+                                    _botWaitsForQuery[chatId] = QueryType.AnsweringTrailerQuestion;
+                                    _singleDataForUser[chatId] = movies[0].Title;
                                 }
                                 else
                                 {
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerIntroduction());
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GetListOfMoviesMessage(movies));
                                     //Запоминаем фильмы, которые пришли конкретно этому пользователю
-                                    _moviesForUser[chatId] = movies.Select(m => m.Title).ToList();
+                                    _multipleDataForUser[chatId] = movies.Select(m => m.Title).ToList();
                                     //Предлагаем выбрать фильм от 1 до movieCount
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MovieChooseMesage(movies.Count()));
                                     //А также меняем статус ожидания бота - бот теперь ожидает выбор фильма пользоваталем
-                                    _waitingForQuery[chatId] = QueryType.SelectingMovie;
+                                    _botWaitsForQuery[chatId] = QueryType.SelectingMovie;
                                 }
                             }
                             //Выводим сообщение и удаляем из словаря, если результатов найдено не было
                             else
                             {
                                 await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.NotFoundMessage());
-                                _waitingForQuery.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
                             }
                             break;
                         }
-                    //Если он ждет ответа на выбор из списка фильмов:
                     case QueryType.SelectingMovie:
                         {
-                            if (_moviesForUser.ContainsKey(chatId))
+                            //Checking if user entered the correct number of movie or cancelled the operation.
+                            int chosenIndex = 1;
+
+                            if (int.TryParse(message.Text, out chosenIndex) && chosenIndex >= 1 &&
+                                chosenIndex <= _multipleDataForUser[chatId].Count)
                             {
-                                int chosenIndex = 1;
-                                //Если пользователь правильно выбрал фильм
-                                if (int.TryParse(message.Text, out chosenIndex) && chosenIndex >= 1 &&
-                                    chosenIndex <= _moviesForUser[chatId].Count)
+                                var title = _multipleDataForUser[chatId][chosenIndex - 1];
+                                var movie = _service.SingleMovieSearch(title);
+                                await SendInfoAboutMovie(chatId, movie);
+                                _multipleDataForUser.Remove(chatId);
+                                _singleDataForUser[chatId] = title;
+                                _botWaitsForQuery[chatId] = QueryType.AnsweringTrailerQuestion;
+
+                            }
+                            else if (message.Text.Trim().ToLower() == "cancel")
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
+                                _multipleDataForUser.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
+                            }
+                            else
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
+                            }
+                        }
+                        break;
+                    case QueryType.AnsweringTrailerQuestion:
+                        {
+                            if (message.Text.Trim().ToLower() == "yes")
+                            {
+                                var link = _service.GetTrailerLinkForMovie(_singleDataForUser[chatId]);
+                                if (link != null)
                                 {
-                                    await SendInfoAboutMovie(chatId, _moviesForUser[chatId][chosenIndex - 1]);
-                                    _moviesForUser.Remove(chatId);
-                                    _waitingForQuery.Remove(chatId);
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerTrailer());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, link);
                                 }
-                                //Если от отменил операцию
-                                else if (message.Text.Trim().ToLower() == "cancel")
-                                {
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
-                                    _moviesForUser.Remove(chatId);
-                                    _waitingForQuery.Remove(chatId);
-                                }
-                                //Если он ввел другой тип сообщения
                                 else
                                 {
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.TrailerWasNotFound());
                                 }
+                                _singleDataForUser.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
                             }
-                            break;
-                        }
-                    //Если бот ждет согласия, на то, чтобы получить трейлер
-                    case QueryType.WaitingTrailer:
-                        {
-                            //-----------------------
-                            await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerTrailer());
-                            //-----------------------
+                            else if (message.Text.Trim().ToLower() == "no" || message.Text.Trim().ToLower() == "cancel")
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
+                                _singleDataForUser.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
+                            }
+                            else
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
+                            }
                             break;
                         }
                     case QueryType.SelectingRandomMovie:
                         {
+                            string title;
                             switch (message.Text.Trim().ToLower())
                             {
+
                                 case "next":
-                                    string title = _service.GetRandomFrom250();
-                                    _answerForUser[chatId] = title;
+                                     title = _service.GetRandomFrom250();
+                                    _singleDataForUser[chatId] = title;
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerToRandomRequest(title));
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ChooseMovieFromRandom());
                                     break;
                                 case "ok":
-                                    string name = "";
-                                    _answerForUser.TryGetValue(chatId, out name);
-                                    _waitingForQuery.Remove(chatId);
-                                    await SendInfoAboutMovie(chatId, name);
+                                    _singleDataForUser.TryGetValue(chatId, out title);
+                                    var movie = _service.SingleMovieSearch(title);
+                                    _botWaitsForQuery[chatId] = QueryType.AnsweringTrailerQuestion;
+                                    _singleDataForUser[chatId] = movie.Title;
+                                    await SendInfoAboutMovie(chatId, movie);
                                     break;
                                 case "no":
                                 case "cancel":
-                                    _answerForUser.Remove(chatId);
-                                    _waitingForQuery.Remove(chatId);
+                                    _singleDataForUser.Remove(chatId);
+                                    _botWaitsForQuery.Remove(chatId);
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
                                     break;
                                 default:
@@ -149,43 +177,43 @@ namespace MoviesBot
                             {
                                 if (actors.Count == 1)
                                 {
-                                    _actorsForUser.Remove(chatId);
+                                    _multipleDataForUser.Remove(chatId);
                                     await SendInfoAboutActor(chatId, actors[0].Name);
                                 }
                                 else
                                 {
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerIntroduction());
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ListActorsAnswer(actors));
-                                    _actorsForUser[chatId] = actors.Select(a => a.Name).ToList();
+                                    _multipleDataForUser[chatId] = actors.Select(a => a.Name).ToList();
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ActorChooseMesage(actors.Count()));
-                                    _waitingForQuery[chatId] = QueryType.SelectingPerson;
+                                    _botWaitsForQuery[chatId] = QueryType.SelectingPerson;
                                 }
                             }
                             else
                             {
                                 await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ActorNotFoundMessage());
-                                _waitingForQuery.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
                             }
                             break;
                         }
 
                     case QueryType.SelectingPerson:
                         {
-                            if (_actorsForUser.ContainsKey(chatId))
+                            if (_multipleDataForUser.ContainsKey(chatId))
                             {
                                 int chosenIndex = 1;
                                 if (int.TryParse(message.Text, out chosenIndex) && chosenIndex >= 1 &&
-                                  chosenIndex <= _actorsForUser[chatId].Count)
+                                  chosenIndex <= _multipleDataForUser[chatId].Count)
                                 {
-                                    await SendInfoAboutActor(chatId, _actorsForUser[chatId][chosenIndex - 1]);
-                                    _actorsForUser.Remove(chatId);
-                                    _waitingForQuery.Remove(chatId);
+                                    await SendInfoAboutActor(chatId, _multipleDataForUser[chatId][chosenIndex - 1]);
+                                    _multipleDataForUser.Remove(chatId);
+                                    _botWaitsForQuery.Remove(chatId);
                                 }
                                 else if (message.Text.Trim().ToLower() == "cancel")
                                 {
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
-                                    _actorsForUser.Remove(chatId);
-                                    _waitingForQuery.Remove(chatId);
+                                    _multipleDataForUser.Remove(chatId);
+                                    _botWaitsForQuery.Remove(chatId);
                                 }
                                 else
                                 {
@@ -200,14 +228,14 @@ namespace MoviesBot
                             {
                                 await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SomeMovieOfGenre(message.Text.Trim().ToLower()));
                                 var movie = _service.GetRandomMovieByGenre(_genres[message.Text.ToLower().Trim()]);
-                                await _client.SendPhotoAsync(chatId, movie.Poster);
-                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GetMovieInfoMessage(movie));
-                                _waitingForQuery.Remove(chatId);
+                                await SendInfoAboutMovie(chatId, movie);
+                                _botWaitsForQuery[chatId] = QueryType.AnsweringTrailerQuestion;
+                                _singleDataForUser[chatId] = movie.Title;
                             }
                             else if (message.Text.Trim().ToLower() == "cancel")
                             {
                                 await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
-                                _waitingForQuery.Remove(chatId);
+                                _botWaitsForQuery.Remove(chatId);
                             }
                             else
                             {
@@ -233,22 +261,22 @@ namespace MoviesBot
                     case "/moviesearch":
                         {
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.EnterMovieTitleInviting());
-                            _waitingForQuery[chatId] = QueryType.SearchingMovie;
+                            _botWaitsForQuery[chatId] = QueryType.SearchingMovie;
                             break;
                         }
                     case "/getfromtop250":
                         {
                             string title = _service.GetRandomFrom250();
-                            _answerForUser[chatId] = title;
+                            _singleDataForUser[chatId] = title;
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerToRandomRequest(title));
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ChooseMovieFromRandom());
-                            _waitingForQuery.Add(chatId, QueryType.SelectingRandomMovie);
+                            _botWaitsForQuery.Add(chatId, QueryType.SelectingRandomMovie);
                             break;
                         }
                     case "/peoplesearch":
                         {
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.EnterActorNameInviting());
-                            _waitingForQuery[chatId] = QueryType.SearchingPerson;
+                            _botWaitsForQuery[chatId] = QueryType.SearchingPerson;
                             break;
                         }
                     case "/getnowplaying":
@@ -263,7 +291,7 @@ namespace MoviesBot
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresIntroduction());
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresAnswer(_genres.Keys.ToList()));
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresChooseMessage());
-                            _waitingForQuery[chatId] = QueryType.SelectingGenre;
+                            _botWaitsForQuery[chatId] = QueryType.SelectingGenre;
                             break;
                         }
                     default:
@@ -277,11 +305,12 @@ namespace MoviesBot
 
 
 
-        public async Task SendInfoAboutMovie(long chatId, string title)
+        public async Task SendInfoAboutMovie(long chatId, Movie movie)
         {
-            var movie = _service.SingleMovieSearch(title);
+
             await _client.SendPhotoAsync(chatId, movie.Poster, $"Poster to ''{movie.Title}''");
             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GetMovieInfoMessage(movie));
+            await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.TrailerQuestion());
         }
 
         public async Task SendInfoAboutActor(long chatId, string name)
@@ -296,5 +325,8 @@ namespace MoviesBot
             else await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.NotFoundMessage());
 
         }
+
+
+
     }
 }

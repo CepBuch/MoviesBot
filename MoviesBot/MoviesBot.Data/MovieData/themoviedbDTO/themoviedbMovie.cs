@@ -30,5 +30,8 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
             }
         }
 
+        [JsonProperty("id")]
+        public string TMDBId { get; set; }
+
     }
 }

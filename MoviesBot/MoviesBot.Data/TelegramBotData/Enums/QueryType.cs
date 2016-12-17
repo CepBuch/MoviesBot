@@ -14,6 +14,6 @@ namespace MoviesBot.Data.TelegramBotData.Enums
         SelectingRandomMovie,
         SelectingPerson,
         SelectingGenre,
-        WaitingTrailer
+        AnsweringTrailerQuestion
     }
 }
