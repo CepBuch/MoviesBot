@@ -12,6 +12,7 @@ namespace MoviesBot
 {
     class BotManager
     {
+        Dictionary<string, int> _genres;
         Dictionary<long, QueryType> _waitingForQuery;
         Dictionary<long, List<string>> _moviesForUser;
         Dictionary<long, string> _answerForUser;
@@ -26,8 +27,11 @@ namespace MoviesBot
             _moviesForUser = new Dictionary<long, List<string>>();
             _answerForUser = new Dictionary<long, string>();
             _actorsForUser = new Dictionary<long, List<string>>();
+
             _service = service;
             _client = client;
+            //Getting genres from themoviedb service
+            _genres = _service.GetGenres();
             client.OnMessageReceived += ProcessMessage;
         }
 
@@ -95,7 +99,7 @@ namespace MoviesBot
                                 //Если он ввел другой тип сообщения
                                 else
                                 {
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoseMessage());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
                                 }
                             }
                             break;
@@ -108,7 +112,7 @@ namespace MoviesBot
                             //-----------------------
                             break;
                         }
-                    case QueryType.ChoosingRandomMovie:
+                    case QueryType.SelectingRandomMovie:
                         {
                             switch (message.Text.Trim().ToLower())
                             {
@@ -185,8 +189,25 @@ namespace MoviesBot
                                 }
                                 else
                                 {
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoseMessage());
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
                                 }
+                            }
+                            break;
+                        }
+                    case QueryType.SelectingGenre:
+                        {
+                            if (_genres.ContainsKey(message.Text.Trim().ToLower()))
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, "сейчас вам придет фильм на жанр по айдишнику " + _genres[message.Text.ToLower().Trim()]);
+                            }
+                            else if (message.Text.Trim().ToLower() == "cancel")
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.SimpleCancelAnswer());
+                                _waitingForQuery.Remove(chatId);
+                            }
+                            else
+                            {
+                                await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.WrongChoiceMessage());
                             }
                             break;
                         }
@@ -217,7 +238,7 @@ namespace MoviesBot
                             _answerForUser[chatId] = title;
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerToRandomRequest(title));
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.ChooseMovieFromRandom());
-                            _waitingForQuery.Add(chatId, QueryType.ChoosingRandomMovie);
+                            _waitingForQuery.Add(chatId, QueryType.SelectingRandomMovie);
                             break;
                         }
                     case "/peoplesearch":
@@ -231,6 +252,14 @@ namespace MoviesBot
                             var movies = _service.GetNowPlaying();
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.IntroductionToNowPlaying());
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.AnswerToNowPlaying(movies));
+                            break;
+                        }
+                    case "/getbygenre":
+                        {
+                            await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresIntroduction());
+                            await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresAnswer(_genres.Keys.ToList()));
+                            await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GenresChooseMessage());
+                            _waitingForQuery[chatId] = QueryType.SelectingGenre;
                             break;
                         }
                     default:

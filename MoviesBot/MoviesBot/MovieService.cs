@@ -119,7 +119,7 @@ namespace MoviesBot
         {
             using (var client = new HttpClient())
             {
-                string result = client.GetStringAsync($"https://api.themoviedb.org/3/movie/now_playing?api_key={_token}").Result;
+                string result = client.GetStringAsync($"https://api.themoviedb.org/3/movie/now_playing?sort_by=popularity.desc&api_key={_token}").Result;
                 var response = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(result);
                 if (response.Results != null && response.Results.Count != 0)
                 {
@@ -129,10 +129,20 @@ namespace MoviesBot
                                   Title = movie.Title,
                                   Description = movie.Plot,
                                   ImdbRating = movie.VoteAverage
-                              }).ToList();
+                              }).Take(10).ToList();
 
                 }
                 else return null;
+            }
+        }
+
+        public Dictionary<string, int> GetGenres()
+        {
+            using (var client = new HttpClient())
+            {
+                string result = client.GetStringAsync($"https://api.themoviedb.org/3/genre/movie/list?api_key={_token}").Result;
+                var response = JsonConvert.DeserializeObject<themoviedbGenreResponse>(result);
+                return response.Genres.ToDictionary(genre => genre.Name.ToLower().Trim(), genre => genre.Id);
             }
         }
     }

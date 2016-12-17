@@ -47,6 +47,8 @@
     <Compile Include="BotAnswers.cs" />
     <Compile Include="MovieData\Model\Movie.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbActor.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbGenre.cs" />
+    <Compile Include="MovieData\themoviedbDTO\themoviedbGenreResponse.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbMovie.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbResponse.cs" />
     <Compile Include="TelegramBotData\Enums\QueryType.cs" />

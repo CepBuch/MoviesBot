@@ -69,8 +69,8 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
         public static string WrongQueryMessage()
             => "I can't understand your query. Write down /info to get all possible commands";
 
-        public static string WrongChoseMessage()
-        => "You are asked to choose the movie to get more about it or put ''No'' to cancel ";
+        public static string WrongChoiceMessage()
+        => "You are asked make a choice to get more information about it or put ''Cancel''";
 
         public static string AnswerIntroduction()
         => "This is all I can offer you:";
@@ -122,20 +122,36 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
         {
             StringBuilder sb = new StringBuilder();
             int i = 1;
-            //foreach (var movie in movies)
-            //{
-            for (int j = 0; j <=3 ; j++)
+            foreach (var movie in movies)
             {
-                sb.AppendLine($"{i++}. {movies[j].Title}");
-                sb.AppendLine($"Plot: {movies[j].Description} \n");
+                sb.AppendLine($"{i++}. {movie.Title}");
+                sb.AppendLine($"Plot: {movie.Description} \n");
             }
-            //sb.AppendLine($"{i++}. {movie.Title}");
-            //sb.AppendLine($"Plot: {movie.Description} \n");
-            //}
             return sb.ToString();
         }
 
         public static string IntroductionToNowPlaying()
-            => "Here is the movies that are now on screens in theatres";
+            => "Here are the movies that are now on screens in theatres: ";
+
+        public static string GenresIntroduction()
+            => "Here are all the genres I've already known: ";
+
+        public static string GenresAnswer(List<string> genres)
+            {
+            StringBuilder sb = new StringBuilder();
+            foreach (var genre in genres)
+            {
+                sb.AppendLine($"- {genre}");
+            }
+            return sb.ToString();
+        }
+
+
+        public static string GenresChooseMessage()
+            => $"Please enter the name of genre to get random movie of this or ''Cancel'' to cancel the operation";
+
+        
+
+
     }
 }

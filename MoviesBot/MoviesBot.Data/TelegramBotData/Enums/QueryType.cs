@@ -9,11 +9,11 @@ namespace MoviesBot.Data.TelegramBotData.Enums
     public enum QueryType
     {
         SearchingMovie,
-        SelectingMovie,
-        WaitingTrailer,
-        ChoosingRandomMovie,
         SearchingPerson,
+        SelectingMovie,
+        SelectingRandomMovie,
         SelectingPerson,
-        ChosingGenre
+        SelectingGenre,
+        WaitingTrailer
     }
 }
