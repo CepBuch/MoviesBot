@@ -41,7 +41,9 @@ namespace MoviesBot
                     var updates = await GetUpdatesAsync();
                     foreach (var update in updates)
                     {
-                        OnMessageReceived?.Invoke(update.Message);
+                        if (update.Message.Text != null && update.Message.Text != String.Empty)
+                            OnMessageReceived?.Invoke(update.Message);
+                            
                         _offset = update.Id + 1;
                     }
                 }
