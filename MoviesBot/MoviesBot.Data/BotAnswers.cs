@@ -191,7 +191,8 @@ movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
         public static string SimpleCancelAnswer()
             => "Ok I've got you, operation is cancelled, let's try /info to see what else I can do for you!";
 
-
+        public static string NotFoundSimilar()
+            => "Unfortunately, I can't find similars to these film (maybe it's unpopular?). Please try again!";
 
 
     }

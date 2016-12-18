@@ -8,7 +8,7 @@ namespace MoviesBot.Interfaces
     {
         Task<List<Movie>> SearchMovies(string query);
         Task<Movie> SingleMovieSearch(string query);
-        Task<string> GetRandomFrom250();
+        string GetRandomFrom250();
         Task<List<Actor>> SearchActors(string query);
         Task<List<Movie>> GetNowPlaying();
         Task<Dictionary<string, int>> GetGenres();

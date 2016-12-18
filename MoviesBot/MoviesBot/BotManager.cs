@@ -100,10 +100,15 @@ namespace MoviesBot
                                 else
                                 {
                                     var movies = await _service.GetSimilarMovies(movie);
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MoviesSearchAnswer(movies));
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MovieSearchAdvice());
+                                    if (movies != null && movies.Count != 0)
+                                    {
+                                        await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MoviesSearchAnswer(movies));
+                                        await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MovieSearchAdvice());
+                                    }
+                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.NotFoundSimilar());
                                     _searchingSimilarUsers.Remove(chatId);
                                     _botWaitsForQuery.Remove(chatId);
+
                                 }
                             }
                             else if (message.Text.Trim().ToLower() == "cancel")
@@ -125,7 +130,7 @@ namespace MoviesBot
                             switch (message.Text.Trim().ToLower())
                             {
                                 case "next":
-                                    title = await _service.GetRandomFrom250();
+                                    title = _service.GetRandomFrom250();
                                     _singleDataForUser[chatId] = title;
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.RandomMovieAnswer(title));
                                     await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.RandomMovieChooseIntro());
@@ -160,6 +165,7 @@ namespace MoviesBot
                                 {
                                     _multipleDataForUser.Remove(chatId);
                                     await SendInfoAboutActor(chatId, actors[0].Name);
+                                    _botWaitsForQuery.Remove(chatId);
                                 }
                                 else
                                 {
@@ -276,7 +282,7 @@ namespace MoviesBot
                         }
                     case "/getfromtop250":
                         {
-                            string title = await _service.GetRandomFrom250();
+                            string title = _service.GetRandomFrom250();
                             _singleDataForUser[chatId] = title;
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.RandomMovieAnswer(title));
                             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.RandomMovieChooseIntro());
@@ -330,7 +336,7 @@ namespace MoviesBot
             await _client.SendChatAction(chatId, ChatAction.uploading_photo);
             await _client.SendPhotoAsync(chatId, movie.Poster, $"Poster to ''{movie.Title}''");
             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.GetMovieInfoMessage(movie));
-            if(movie.ImdbLink != null)
+            if (movie.ImdbLink != null)
                 await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MovieImdbApplication(movie.ImdbLink));
             await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.TrailerQuestion());
         }
