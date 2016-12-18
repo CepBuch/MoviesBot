@@ -105,7 +105,10 @@ namespace MoviesBot
                                         await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MoviesSearchAnswer(movies));
                                         await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.MovieSearchAdvice());
                                     }
-                                    await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.NotFoundSimilar());
+                                    else
+                                    {
+                                        await _client.SendMessageAsync(MessageType.TextMessage, chatId, BotAnswers.NotFoundSimilar());
+                                    }
                                     _searchingSimilarUsers.Remove(chatId);
                                     _botWaitsForQuery.Remove(chatId);
 
