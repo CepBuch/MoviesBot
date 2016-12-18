@@ -12,5 +12,4 @@ namespace MoviesBot.Data.TelegramBotData.Enums
         uploading_photo,
         uploading_video
     }
-
 }

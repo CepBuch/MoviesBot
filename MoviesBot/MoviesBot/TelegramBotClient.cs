@@ -89,10 +89,11 @@ namespace MoviesBot
             parameters.Add("chat_id", chatId);
             if (!string.IsNullOrEmpty(typeInfo.Value))
                 parameters.Add(typeInfo.Value, content);
-            LogMessage($"Messge to {chatId} was sent");
+            LogMessage($"Message to {chatId} was sent");
 
             return SendWebRequest<Message>(typeInfo.Key, parameters);
         }
+
 
         public async Task<Message> SendPhotoAsync(long chatId, string path, string caption = "")
         {

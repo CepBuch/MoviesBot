@@ -30,8 +30,5 @@ namespace MoviesBot.Data.MovieData.Model
                 _imdbLink = value != null ? string.Concat("http://www.imdb.com/title/", value) : value;
             }
         }
-
     }
-
-
 }

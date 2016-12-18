@@ -23,7 +23,5 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
                 _poster = "https://image.tmdb.org/t/p/w300" + value;
             }
         }
-
-
     }
 }

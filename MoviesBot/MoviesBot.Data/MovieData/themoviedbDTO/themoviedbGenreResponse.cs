@@ -11,8 +11,5 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
     {
         [JsonProperty("genres")]
         public List<themoviedbGenre> Genres { get; set; }
-
-      
-      
     }
 }

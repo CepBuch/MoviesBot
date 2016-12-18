@@ -23,10 +23,9 @@ List of commands:
         }
 
 
-
-
         public static string MovieSearchIntroduction()
     => $"Please, enter a name of the movie you are looking for";
+
 
         public static string MovieChooseMesage(int to, int from = 1)
 => $"Please, choose the exact movie to get more detailed information (enter its number from {from} to {to}) " +
@@ -45,9 +44,9 @@ List of commands:
         }
 
 
-
         public static string RandomMovieAnswer(string title)
             => $"There is a random movie from IMDB top 250 movies for you:\n ''{title}''";
+
 
         public static string RandomMovieChooseIntro()
             => @"- enter ''ok'' to view info about this movie
@@ -55,10 +54,9 @@ List of commands:
 - enter ''cancel to cancel this operation";
 
 
-
-
         public static string PeopleSearchIntroduction()
         => $"Please, enter a name of the person you are looking for";
+
 
         public static string PeopleSearchAnswer(List<Actor> actors)
         {
@@ -70,6 +68,7 @@ List of commands:
             }
             return sb.ToString();
         }
+
 
         public static string PeopleSearchChoose(int to, int from = 1)
             => $"Please, choose the exact actor to get more detailed information (enter his number from {from} to {to}) " +
@@ -90,15 +89,14 @@ List of commands:
         }
 
 
-
         public static string TrailerQuestion()
             => "Would you like to watch a trailer on chosen movie? (yes/no) ";
         public static string TrailerAnswer()
 => @"Here is the trailer for this movie. Note, that this function doesn't work perfectly and trailer may be unsuitable. ";
 
+
         public static string TrailerWasNotFound()
             => "Unfortunately, I couldn't find any trailers for this movie :( ";
-
 
 
         public static string NowPlayingIntroduction()
@@ -118,9 +116,9 @@ List of commands:
         }
 
 
-
         public static string GenresIntroduction()
     => "Here are all the genres I've already known: ";
+
 
         public static string GenresAnswer(List<string> genres)
         {
@@ -132,22 +130,21 @@ List of commands:
             return sb.ToString();
         }
 
+
         public static string GenresChoose()
             => $"Please enter the name of genre to get random movie of this or ''Cancel'' to cancel the operation";
 
+
         public static string SomeMovieOfGenre(string genre)
             => $"I find random movie of {genre} for you";
-
 
 
         public static string GetSimilarIntroduction()
             => "Ok, first we should find a movie to which you want to see similars.";
 
 
-
         public static string MovieSearchAdvice()
             => "You can always use /moviesearch command to see more information about one of these movies ";
-
 
 
         public static string GetMovieInfoMessage(Movie movie)
@@ -164,36 +161,34 @@ Description: {7}
 IMDB rating: {8}"
 , movie.Title, movie.Year, movie.Runtime, movie.Genre, movie.Country,
 movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
-
         }
+
+
         public static string MovieImdbApplication(string link)
             => $"You can see more information about this movie on IMDB official website\n{link}";
-
-
 
 
         public static string NotFoundMessage()
         => "Unfortunately, I couldn't find anything for you. Please, make sure your request is correct and try again!";
 
 
-
-
-
         public static string WrongQueryMessage()
             => "I can't understand your query. Write down /info to get all possible commands";
+
 
         public static string WrongChoiceMessage()
         => "You are asked to make a choice to get more information or put ''Cancel''. Please, try again!";
 
+
         public static string SimpleAnswerIntroduction()
         => "This is all I can offer you:";
+
 
         public static string SimpleCancelAnswer()
             => "Ok I've got you, operation is cancelled, let's try /info to see what else I can do for you!";
 
+
         public static string NotFoundSimilar()
             => "Unfortunately, I can't find similars to these film (maybe it's unpopular?). Please try again!";
-
-
     }
 }

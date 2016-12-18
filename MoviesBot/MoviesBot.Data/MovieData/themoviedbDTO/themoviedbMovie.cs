@@ -32,9 +32,5 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
                 _release = value != null && value.Split('-').Length == 3 ? value.Split('-')[0] : value;
             }
         }
-      
-
-
-
     }
 }
