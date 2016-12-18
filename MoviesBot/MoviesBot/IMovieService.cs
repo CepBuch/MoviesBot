@@ -1,21 +1,21 @@
 ﻿using MoviesBot.Data.MovieData.Model;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace MoviesBot
 {
     interface IMovieService
     {
-        List<Movie> SearchMovies(string query);
-        Movie SingleMovieSearch(string query);
-        string GetRandomFrom250();
-        List<Actor> SearchActors(string query);
-        List<Movie> GetNowPlaying();
-        Dictionary<string, int> GetGenres();
-        Movie GetRandomMovieByGenre(int genreId);
+        Task<List<Movie>> SearchMovies(string query);
+        Task<Movie> SingleMovieSearch(string query);
+        Task<string> GetRandomFrom250();
+        Task<List<Actor>> SearchActors(string query);
+        Task<List<Movie>> GetNowPlaying();
+        Task<Dictionary<string, int>> GetGenres();
+        Task<Movie> GetRandomMovieByGenre(int genreId);
 
-        string GetTrailerLinkForMovie(string title);
+        Task<string> GetTrailerLinkForMovie(string title);
 
-        List<Movie> GetSimilarMovies(Movie movie);
+        Task<List<Movie>> GetSimilarMovies(Movie movie);
     }
 }

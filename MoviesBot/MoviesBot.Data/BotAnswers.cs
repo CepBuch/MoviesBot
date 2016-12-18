@@ -168,6 +168,8 @@ IMDB rating: {8}"
 movie.Director, movie.Actors, movie.Description, movie.ImdbRating);
 
         }
+        public static string MovieImdbApplication(string link)
+            => $"You can see more information about this movie on IMDB official website\n{link}";
 
 
 

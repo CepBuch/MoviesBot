@@ -13,7 +13,7 @@ namespace MoviesBot
         
         static  void Main(string[] args)
         {
-            TelegramBotClient tg = new TelegramBotClient("273892003:AAH2kr6HrehC94NDV_kifhErXmi_TJmTV1A");
+            TelegramBotClient tg = new TelegramBotClient("327020777:AAFLnI2lCN3xCSyI7t-KCnizFNRT6qApbCE");
             tg.LogMessage += m => Console.WriteLine(m);
             MovieService ms = new MovieService();
             BotManager manager = new BotManager(tg, ms);

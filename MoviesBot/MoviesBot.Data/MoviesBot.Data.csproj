@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotAnswers.cs" />
+    <Compile Include="MovieData\Model\Actor.cs" />
     <Compile Include="MovieData\Model\Movie.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbActor.cs" />
     <Compile Include="MovieData\themoviedbDTO\themoviedbGenre.cs" />

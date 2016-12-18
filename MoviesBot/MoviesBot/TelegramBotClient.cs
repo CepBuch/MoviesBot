@@ -48,9 +48,8 @@ namespace MoviesBot
                         _offset = update.Id + 1;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    LogMessage?.Invoke($"Unable to get updates. Exception occured: {ex.Message}");
                     Thread.Sleep(10000);
                 }
             }
@@ -93,7 +92,7 @@ namespace MoviesBot
             parameters.Add("chat_id", chatId);
             if (!string.IsNullOrEmpty(typeInfo.Value))
                 parameters.Add(typeInfo.Value, content);
-            LogMessage($"Response to {chatId} was sent");
+            LogMessage($"Messge to {chatId} was sent");
 
             return SendWebRequest<Message>(typeInfo.Key, parameters);
         }
@@ -149,6 +148,7 @@ namespace MoviesBot
                 }
                 catch (HttpRequestException e)
                 {
+                    LogMessage?.Invoke($"Unable to provide operation {methodName}. Exception occured: {e.Message}");
                     throw new HttpRequestException(e.Message);
                 }
             }

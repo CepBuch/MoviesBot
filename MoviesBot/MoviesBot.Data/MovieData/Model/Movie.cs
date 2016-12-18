@@ -11,7 +11,6 @@ namespace MoviesBot.Data.MovieData.Model
         public string Title { get; set; }
         public string Year { get; set; }
         public string Poster { get; set; }
-        public string ImdbID { get; set; }
         public string Runtime { get; set; }
         public string Genre { get; set; }
         public string Director { get; set; }
@@ -20,12 +19,19 @@ namespace MoviesBot.Data.MovieData.Model
         public string Description { get; set; }
         public string Country { get; set; }
         public string ImdbRating { get; set; }
+
+        private string _imdbLink;
+
+        public string ImdbLink
+        {
+            get { return _imdbLink; }
+            set
+            {
+                _imdbLink = value != null ? string.Concat("http://www.imdb.com/title/", value) : value;
+            }
+        }
+
     }
 
-    public class Actor
-    {
-        public string Name { get; set; }
-        public List<Movie> Movies { get; set; }
-        public string Poster { get; set; }
-    }
+
 }
