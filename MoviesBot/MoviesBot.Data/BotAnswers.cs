@@ -11,7 +11,7 @@ namespace MoviesBot.Data
     {
         public static string InfoMessage()
         {
-            return String.Format(@"Hi! This bot is responsible for searching movies:
+            return String.Format(@"Hi! This bot is responsible for different operations with movies:
 List of commands:
 /info - Shows information about this bot (like this message)
 /moviesearch - Provides search by film title/piece of title
