@@ -15,14 +15,12 @@ namespace MoviesBot.Data
 List of commands:
 /info - Shows information about this bot (like this message)
 /moviesearch - Provides search by film title/piece of title
+/peoplesearch - Search actors/directors by the name or piece of name
+/getbygenre - Returns random movie by a particular genre
+/getnowplaying - Returns movies, which are on screens now
 /getfromtop250 - Returns random movie from IMDB top-250 best movies
-/getbygenre - Returns random movie by genre
-/peoplesearch - Search actors by the name/piece of name");
+/getsimilars - Returns movies which are similar to some movie");
         }
-
-
-
-
 
 
 
@@ -54,7 +52,7 @@ List of commands:
         public static string RandomMovieChooseIntro()
             => @"- enter ''ok'' to view info about this movie
 - enter ''next'' to get another movie
-- enter ''cancel to cancel this opearation";
+- enter ''cancel to cancel this operation";
 
 
 
@@ -80,7 +78,7 @@ List of commands:
 
         public static string SingleSearchActorsAnswer(Actor actor)
         {
-            string actorName = $"Sending most popular movies of:\n {actor.Name}";
+            string actorName = $"Sending most popular movies of {actor.Name}: \n";
             StringBuilder sb = new StringBuilder();
             int i = 1;
             foreach (var movie in actor.Movies)
@@ -148,7 +146,7 @@ List of commands:
 
 
         public static string MovieSearchAdvice()
-            => "You can always use /moveiserach command to see more information about one of these movies ";
+            => "You can always use /moviesearch command to see more information about one of these movies ";
 
 
 
