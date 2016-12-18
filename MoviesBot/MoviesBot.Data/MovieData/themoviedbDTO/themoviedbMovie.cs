@@ -9,8 +9,11 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
 {
     public class themoviedbMovie
     {
-        [JsonProperty("original_title")]
+        [JsonProperty("title")]
         public string Title { get; set; }
+
+        [JsonProperty("id")]
+        public string TMDBId { get; set; }
 
         [JsonProperty("overview")]
         public string Plot { get; set; }
@@ -29,9 +32,9 @@ namespace MoviesBot.Data.MovieData.themoviedbDTO
                 _release = value != null && value.Split('-').Length == 3 ? value.Split('-')[0] : value;
             }
         }
+      
 
-        [JsonProperty("id")]
-        public string TMDBId { get; set; }
+
 
     }
 }

@@ -15,5 +15,7 @@ namespace MoviesBot
         Movie GetRandomMovieByGenre(int genreId);
 
         string GetTrailerLinkForMovie(string title);
+
+        List<Movie> GetSimilarMovies(Movie movie);
     }
 }
