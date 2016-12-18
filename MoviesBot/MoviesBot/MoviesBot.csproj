@@ -48,8 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotManager.cs" />
-    <Compile Include="IMovieService.cs" />
-    <Compile Include="ITelegramBotClient.cs" />
+    <Compile Include="Intefraces\IMovieService.cs" />
+    <Compile Include="Intefraces\ITelegramBotClient.cs" />
     <Compile Include="MovieService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

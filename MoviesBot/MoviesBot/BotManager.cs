@@ -1,11 +1,10 @@
-﻿using MoviesBot.Data;
+﻿using MoviesBot.Interfaces;
+using MoviesBot.Data;
 using MoviesBot.Data.MovieData.Model;
 using MoviesBot.Data.TelegramBotData.Enums;
 using MoviesBot.Data.TelegramBotData.Types;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MoviesBot

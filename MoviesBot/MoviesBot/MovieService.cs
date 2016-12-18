@@ -1,6 +1,7 @@
 ﻿using MoviesBot.Data.MovieData.Model;
 using MoviesBot.Data.MovieData.omdbDTO;
 using MoviesBot.Data.MovieData.themoviedbDTO;
+using MoviesBot.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

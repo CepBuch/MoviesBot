@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MoviesBot.Data.TelegramBotData.Types;
 using System.Threading.Tasks;
 using MoviesBot.Data.TelegramBotData.Enums;
 
-namespace MoviesBot
+namespace MoviesBot.Interfaces
 {
     interface ITelegramBotClient
     {

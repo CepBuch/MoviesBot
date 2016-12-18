@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MoviesBot
+namespace MoviesBot.Interfaces
 {
     interface IMovieService
     {
