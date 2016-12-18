@@ -143,7 +143,10 @@ namespace MoviesBot
                 {
                     string result = await client.GetStringAsync($"https://api.themoviedb.org/3/genre/movie/list?api_key={_token}");
                     var response = JsonConvert.DeserializeObject<themoviedbGenreResponse>(result);
-                    return response.Genres.ToDictionary(genre => genre.Name.ToLower().Trim(), genre => genre.Id);
+                    var genres = response.Genres.ToDictionary(genre => genre.Name.ToLower().Trim(), genre => genre.Id);
+                    genres.Remove("tv movie");
+                    genres.Remove("documentary");
+                    return genres;
                 }
             }
             catch (HttpRequestException)
@@ -170,7 +173,7 @@ namespace MoviesBot
 
                     var response2 = JsonConvert.DeserializeObject<themoviedbResponse<themoviedbMovie>>(result2);
                     var movies = response2.Results.Select(movie => movie.Title).ToList();
-                    return await SingleMovieSearch(movies[rnd.Next(1, movies.Count)]);
+                    return await SingleMovieSearch(movies[rnd.Next(0, movies.Count)]);
                 }
             }
             catch (HttpRequestException)
